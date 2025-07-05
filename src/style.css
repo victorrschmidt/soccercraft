@@ -1,0 +1,206 @@
+:root {
+  --light-green: #329635;
+  --default-green: #366B37;
+  --dark-green: #2B332B;
+  --light-grey: #D3D3D3;
+  --link-blue: #0047AB;
+}
+.no-selection {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+a, a:visited, a:hover, a:active, a:focus {
+  color: inherit;
+  display: contents;
+  text-decoration: none;
+}
+body {
+  background-color: var(--light-green);
+  font-family: 'Lato', sans-serif;
+}
+
+/* Header */
+header {
+  background-color: var(--light-green);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100.0%;
+  height: 50px;
+  max-width: 1440px;
+  padding: 32px;
+}
+#header-content-game-logo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 280px;
+}
+#header-content-game-logo-title {
+  color: var(--dark-green);
+  font-size: 2.6em;
+}
+#header-content-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  width: 360px;
+}
+#header-content-buttons > * {
+  background-color: var(--default-green);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 46.0%;
+  height: 44px;
+  border-radius: 4px;
+  font-size: 1.3em;
+  transition: 0.3s;
+}
+#header-content-buttons > *:hover {
+  font-size: 1.2em;
+}
+
+/* Main */
+main {
+  background-color: var(--light-grey);
+  outline: solid var(--default-green) 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.main-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  margin: 64px 0;
+}
+#main-content-home {
+  flex-direction: column;
+}
+#main-content-home-title {
+  color: var(--dark-green);
+  font-size: 2.0em;
+}
+#main-content-home-tasks {
+  background-color: var(--light-green);
+  outline: solid var(--default-green) 4px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  row-gap: 16px;
+  column-gap: 16px;
+  width: 760px;
+  height: 440px;
+  padding: 16px;
+  border-radius: 4px;
+}
+#main-content-home-tasks > * {
+  background-color: var(--default-green);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100.0%;
+  border-radius: 4px;
+  font-size: 2.2em;
+  transition: 0.3s;
+}
+#main-content-home-tasks > *:hover {
+  font-size: 1.7em;
+}
+#main-content-game {
+  flex-direction: row;
+}
+#main-content-game-controls {
+  background-color: var(--light-green);
+  display: flex;
+  flex-direction: column;
+  width: 580px;
+  height: 440px;
+}
+#main-content-game-controls-display {
+  background-color: var(--dark-green);
+  display: grid;
+  place-items: center;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(12, 1fr);
+  width: 100.0%;
+  height: 30.0%;
+  padding: 4px;
+}
+#main-content-game-controls-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100.0%;
+  height: 70.0%;
+}
+#main-content-game-controls-buttons > * {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100.0%;
+  height: 50.0%;
+}
+#main-content-game-controls-buttons > * > * {
+  cursor: pointer;
+  border: 6px solid var(--default-green);
+  transition: transform 0.2s ease;
+}
+#main-content-game-controls-buttons > * > *:hover {
+  transform: translateY(-2px);
+}
+#main-content-tutorial-paragraphs {
+  background-color: var(--light-green);
+  color: var(--dark-green);
+  outline: solid var(--default-green) 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 38px;
+  width: 920px;
+  padding: 32px;
+  border-radius: 4px;
+}
+#main-content-tutorial-paragraphs > section {
+  display: flex;
+  flex-direction: column;
+  width: 100.0%;
+  gap: 12px;
+}
+#main-content-tutorial-paragraphs > section > h2 {
+  font-size: 1.8em;
+}
+#main-content-tutorial-paragraphs > section > p {
+  font-size: 1.1em;
+}
+#main-content-tutorial-paragraphs > section > p > a {
+  color: var(--link-blue);
+}
+
+/* Footer */
+footer {
+  background-color: var(--light-green);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
