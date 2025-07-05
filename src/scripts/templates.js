@@ -1,0 +1,5 @@
+const SINGLE_PLAYER_TEMPLATES = [
+
+];
+
+export default SINGLE_PLAYER_TEMPLATES;
