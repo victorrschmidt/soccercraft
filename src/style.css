@@ -128,6 +128,32 @@ main {
 #main-content-game {
   flex-direction: row;
 }
+#main-content-game-screen {
+  display: flex;
+  gap: 4px;
+}
+#main-content-game-screen-functions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+#main-content-game-screen-functions > *:hover {
+  transform: translateX(-2px);
+}
+.function-button,
+.move-button {
+  cursor: pointer;
+  border: 6px solid var(--default-green);
+  transition: transform 0.2s ease;
+}
+.small-button {
+  width: 120px;
+  height: 120px;
+}
+.big-button {
+  width: 175px;
+  height: 125px;
+}
 #main-content-game-controls {
   background-color: var(--light-green);
   display: flex;
@@ -159,11 +185,6 @@ main {
   align-items: center;
   width: 100.0%;
   height: 50.0%;
-}
-#main-content-game-controls-buttons > * > * {
-  cursor: pointer;
-  border: 6px solid var(--default-green);
-  transition: transform 0.2s ease;
 }
 #main-content-game-controls-buttons > * > *:hover {
   transform: translateY(-2px);

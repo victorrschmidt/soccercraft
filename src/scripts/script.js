@@ -12,8 +12,7 @@ import { SinglePlayerGame } from './game.js';
 import { Entity, Player } from './entities.js';
 
 const TASK_NUMBER = Number(window.location.pathname.split('/').pop()[6]);
-const game = new SinglePlayerGame();
+const game = new SinglePlayerGame(TASK_NUMBER);
 
-game.generateTemplate(TASK_NUMBER);
-game.standBy();
-Interface.addEventListeners(game.play);
+game.generateTemplate();
+Interface.addEventListeners(game.play, game.generateTemplate, game.changeTeam);

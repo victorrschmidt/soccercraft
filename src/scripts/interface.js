@@ -3,14 +3,18 @@ import Assets from './assets.js';
 export default class Interface {
     static moveset_display = document.getElementById('main-content-game-controls-display');
     static play_button = document.getElementById('play-button');
+    static restart_button = document.getElementById('restart-button');
+    static team_button = document.getElementById('team-button');
     static erase_button = document.getElementById('erase-button');
     static move_buttons = document.getElementsByClassName('move-button');
 
     /**
      * Adiciona as funções para os botões do painel de controle.
      */
-    static addEventListeners(f) {
-        Interface.play_button.addEventListener('click', () => { f(); });
+    static addEventListeners(fplay, frestart, fteam) {
+        Interface.play_button.addEventListener('click', () => { fplay(); });
+        Interface.restart_button.addEventListener('click', () => { frestart(); });
+        Interface.team_button.addEventListener('click', () => { fteam(); });
         Interface.erase_button.addEventListener('click', Interface.deleteMove);
         for (const button of Interface.move_buttons) {
             button.addEventListener('click', () => {
