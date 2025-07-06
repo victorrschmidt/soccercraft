@@ -7,46 +7,14 @@ Tarefa 4 - Chutar em diferentes posições + goleiro
 
 */
 
-class Utilities {
-    /**
-     * Retorna um inteiro no intervalo [0, max[
-     */
-    static randomInt(max) {
-        return Math.floor(Math.random() * max);
-    }
-}
+import { Entity, Player } from './entities';
+
+console.log(Player, Entity);
 
 class Assets {
-    static path = '../assets';
+    static path = '../assets'
     static display_icon_default_size = '40';
     static game_player_default_size = ['99', '197'];
-}
-
-class Entity {
-    constructor(src, x, y, width, height) {
-        this.image = new Image();
-        this.image.src = src;
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.loaded = false;
-        this.image.onload = () => { this.loaded = true; };
-    }
-
-    draw(ctx) {
-        if (this.loaded) {
-            ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-        }
-    }
-}
-
-class Player extends Entity {
-    constructor(src, x, y, width, height, team, has_ball) {
-        super(src, x, y, width, height);
-        this.team = team;
-        this.has_ball = has_ball;
-    }
 }
 
 class Game {
