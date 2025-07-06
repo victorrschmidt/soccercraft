@@ -78,11 +78,7 @@ export class SinglePlayerGame {
         }
     }
 
-    /**
-     * Gera um template aleatório para o jogo.
-     */
-    generateTemplate = () => {
-        this.position_grid = getTemplate(this.task_number);
+    resetPlayers = () => {
         this.player_characters_ptrs.blue = 0;
         this.player_characters_ptrs.red = 0;
         this.player_list = [];
@@ -91,10 +87,20 @@ export class SinglePlayerGame {
     }
 
     /**
+     * Gera um template aleatório para o jogo.
+     */
+    generateTemplate = () => {
+        this.position_grid = getTemplate(this.task_number);
+        this.resetPlayers();
+    }
+
+    /**
      * Muda o time que o aluno está controlando.
      */
     changeTeam = () => {
         [this.friend_team, this.enemy_team] = [this.enemy_team, this.friend_team];
-        this.createPlayers();
+        this.resetPlayers();
+        console.log(this.position_grid);
+        console.log(this.player_list);
     }
 }
