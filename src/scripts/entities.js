@@ -1,4 +1,4 @@
-class Entity {
+export class Entity {
     constructor(src, x, y, width, height) {
         this.image = new Image();
         this.image.src = src;
@@ -17,12 +17,10 @@ class Entity {
     }
 }
 
-class Player extends Entity {
+export class Player extends Entity {
     constructor(src, x, y, width, height, team, has_ball) {
         super(src, x, y, width, height);
         this.team = team;
         this.has_ball = has_ball;
     }
 }
-
-export { Entity, Player };
