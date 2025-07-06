@@ -35,7 +35,7 @@
  *   - 6 jogadores adversários
  *   - 1 goleiro adversário
  */
-import Utilities from './utilities';
+import Utilities from './utilities.js';
 
 export default function getTemplate(task_number) {
     const task_config = {

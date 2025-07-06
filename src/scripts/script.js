@@ -7,7 +7,7 @@ Tarefa 4 - Chutar em diferentes posições + goleiro
 
 */
 
-import { Entity, Player } from './entities';
+import { Entity, Player } from './entities.js';
 
 console.log(Player, Entity);
 
