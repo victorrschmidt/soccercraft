@@ -9,8 +9,6 @@ Tarefa 4 - Chutar em diferentes posições + goleiro
 
 import { Entity, Player } from './entities.js';
 
-console.log(Player, Entity);
-
 class Assets {
     static path = '../assets'
     static display_icon_default_size = '40';
@@ -22,22 +20,6 @@ class Game {
         this.canvas = document.getElementById('main-content-game-canvas');
         this.ctx = this.canvas.getContext('2d');
         this.background = new Entity(`${Assets.path}/background.png`, 0, 0, this.canvas.width, this.canvas.height);
-        this.grid_positions = [
-            [0, 0]
-        ];
-        this.templates = [
-            [[0, 0, false], [100, 100, false]]
-        ];
-        this.chosen_template = this.templates[Utilities.randomInt(this.templates.length)];
-        this.players = Array(this.chosen_template.length).map((player, index) =>
-            new Player(
-                `${Assets.path}/player_blue_male_1.png`,
-                this.chosen_template[index][0],
-                this.chosen_template[index][1],
-                Assets.game_player_default_size[0],
-                Assets.game_player_default_size[1],
-
-            ));
     }
 
     standBy = () => {
