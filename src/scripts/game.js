@@ -1,7 +1,7 @@
-import Interface from './interface.js';
 import Assets from './assets.js';
+import Interface from './interface.js';
+import Entity from './entity.js';
 import getTemplate from './templates.js';
-import { Entity, Player } from './entities.js';
 
 export class SinglePlayerGame {
     constructor(task_number) {
@@ -17,8 +17,11 @@ export class SinglePlayerGame {
         this.friend_team = 'blue';
         this.enemy_team = 'red';
         this.player_characters_ptrs = {'blue': 0, 'red': 0};
+        this.main_player_pos = {x: undefined, y: undefined};
         this.player_list = [];
         this.position_grid = undefined;
+        this.position_grid_cur = undefined;
+        this.moveset = undefined;
     }
 
     /**
@@ -43,8 +46,13 @@ export class SinglePlayerGame {
      * Inicia o jogo.
      */
     play = () => {
-        this.drawEntities();
-        requestAnimationFrame(this.play);
+        this.getMoveset();
+        this.copyPositionGrid();
+        for (const move of this.moveset) {
+            if (!this.isValidMove(move)) {
+                break;
+            }
+        }
     }
 
     /**
@@ -54,25 +62,22 @@ export class SinglePlayerGame {
         for (let i = 0; i < this.position_grid.length; i++) {
             for (let j = 0; j < this.position_grid[0].length; j++) {
                 let n = this.position_grid[i][j];
-
                 if (n == 0) {
                     continue;
                 }
-
                 let team = n < 3 ? this.friend_team : this.enemy_team;
                 let src = `${Assets.path}/player_${team}_${this.player_characters_ptrs[team] + 1}.png`;
                 let x = this.canvas_positions.x[j];
                 let y = this.canvas_positions.y[i];
-                let has_ball = n == 2;
                 this.player_characters_ptrs[team]++;
-                this.player_list.push(new Player(
-                    src,
-                    x,
-                    y,
+                if (n == 2) {
+                    this.main_player_pos.y = i;
+                    this.main_player_pos.x = j;
+                }
+                this.player_list.push(new Entity(
+                    src, x, y,
                     Assets.game_player_default_size.width,
                     Assets.game_player_default_size.height,
-                    team,
-                    has_ball
                 ));
             }
         }
@@ -83,7 +88,6 @@ export class SinglePlayerGame {
         this.player_characters_ptrs.red = 0;
         this.player_list = [];
         this.createPlayers();
-        this.standBy();
     }
 
     /**
@@ -100,7 +104,37 @@ export class SinglePlayerGame {
     changeTeam = () => {
         [this.friend_team, this.enemy_team] = [this.enemy_team, this.friend_team];
         this.resetPlayers();
-        console.log(this.position_grid);
-        console.log(this.player_list);
+    }
+
+    /**
+     * Pega a lista de movimentos da interface atual.
+     */
+    getMoveset() {
+        this.moveset = Interface.getMoveList();
+    }
+
+    isValidMove(move) {
+        let y = this.main_player_pos.y;
+        let x = this.main_player_pos.x;
+
+        switch(move) {
+            case 'player_move_up':
+                return 0 <= y - 1 && this.position_grid[y - 1][x] == 0;
+            case 'player_move_right':
+                return x + 1 < 5 && this.position_grid[y][x + 1] == 0;
+            case 'player_move_down':
+                return y + 1 < 8 && this.position_grid[y + 1][x] == 0;
+            case 'player_move_left':
+                return 0 <= x - 1 && this.position_grid[y][x - 1] == 0;
+        }
+    }
+
+    copyPositionGrid() {
+        this.position_grid_cur = Array.from({length: this.position_grid.length}, () => Array(this.position_grid[0].length));
+        for (let i = 0; i < this.position_grid.length; i++) {
+            for (let j = 0; j < this.position_grid[0].length; j++) {
+                this.position_grid_cur[i][j] = this.position_grid[i][j];
+            }
+        }
     }
 }

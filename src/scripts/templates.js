@@ -39,45 +39,26 @@ import Utilities from './utilities.js';
 
 export default function getTemplate(task_number) {
     const task_config = {
-        1: {
-            half_field: true,
-            has_goalkeeper: false,
-            enemy_count: 5,
-            friend_count: 0
-        },
-        2: {
-            half_field: false,
-            has_goalkeeper: false,
-            enemy_count: 8,
-            friend_count: 0
-        },
-        3: {
-            half_field: false,
-            has_goalkeeper: false,
-            enemy_count: 6,
-            friend_count: 3
-        },
-        4: {
-            half_field: false,
-            has_goalkeeper: true,
-            enemy_count: 6,
-            friend_count: 3
-        }
+        1: {half_field: true, has_goalkeeper: false, enemy_count: 5, friend_count: 0},
+        2: {half_field: false, has_goalkeeper: false, enemy_count: 8, friend_count: 0},
+        3: {half_field: false, has_goalkeeper: false, enemy_count: 6, friend_count: 3},
+        4: {half_field: false, has_goalkeeper: true, enemy_count: 6, friend_count: 3}
     };
     const TASK = task_config[task_number];
     const ROWS = 8;
     const COLS = 5;
+    const goalkeeper_position = {y: 0, x: Math.floor(COLS / 2)};
     let template = Array.from({length: ROWS}, () => Array(COLS).fill(0));
 
     if (TASK.has_goalkeeper) {
-        template[0][Math.floor(COLS / 2)] = Utilities.randint(4, 6);
+        template[goalkeeper_position.y][goalkeeper_position.x] = Utilities.randint(4, 6);
     }
 
     let positions = [];
 
     for (let i = 0; i < ROWS - 4 * Number(TASK.half_field); i++) {
         for (let j = 0; j < COLS; j++) {
-            if (i != 0 || j != Math.floor(COLS / 2)) {
+            if (i != goalkeeper_position.y || j != goalkeeper_position.x) {
                 positions.push([i, j]);
             }
         }
@@ -90,14 +71,15 @@ export default function getTemplate(task_number) {
     positions.splice(main_player_index, 1);
 
     function canAddEnemy(i, j) {
-        const dy = [-1, 0, 1, 0];
-        const dx = [0, 1, 0, -1];
+        const dy = task_number == 1 ? [0, 1, 0] : [-1, 0, 1, 0];
+        const dx = task_number == 1 ? [-1, 0, 1] : [0, 1, 0, -1];
         let vis = Array.from({length: ROWS - 4 * Number(TASK.half_field)}, () => Array(COLS).fill(false));
+        template[i][j] = 3;
 
         function dfs(i, j) {
             vis[i][j] = true;
 
-            for (let k = 0; k < 4; k++) {
+            for (let k = 0; k < dy.length; k++) {
                 let _i = i + dy[k];
                 let _j = j + dx[k];
 
@@ -108,23 +90,32 @@ export default function getTemplate(task_number) {
         }
 
         dfs(0, Math.floor(COLS / 2));
+        template[i][j] = 0;
         return vis[main_player_row][main_player_col];
     }
 
     for (let i = 0; i < TASK.enemy_count; i++) {
-        let index = Utilities.randint(0, positions.length - 1);
+        let available_positions = Array(positions.length).fill().map((x, i) => i);
+        let index = Utilities.randint(0, available_positions.length - 1);
+        let y = positions[available_positions[index]][0];
+        let x = positions[available_positions[index]][1];
 
-        while (!canAddEnemy(positions[index][0], positions[index][1])) {
-            index = Utilities.randint(0, positions.length - 1);
+        while (!canAddEnemy(y, x)) {
+            available_positions.splice(index, 1);
+            index = Utilities.randint(0, available_positions.length - 1);
+            y = positions[available_positions[index]][0];
+            x = positions[available_positions[index]][1];
         }
 
-        template[positions[index][0]][positions[index][1]] = 3;
-        positions.splice(index, 1);
+        template[y][x] = 3;
+        positions.splice(available_positions[index], 1);
     }
 
     for (let i = 0; i < TASK.friend_count; i++) {
         let index = Utilities.randint(0, positions.length - 1);
-        template[positions[index][0]][positions[index][1]] = 1;
+        let y = positions[index][0];
+        let x = positions[index][1];
+        template[y][x] = 1;
         positions.splice(index, 1);
     }
 

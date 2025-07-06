@@ -35,7 +35,7 @@ export default class Interface {
      */
     static getMoveList() {
         return [...Interface.moveset_display.children].map((element) =>
-            element.className.split('-').slice(1).join('-'));
+            element.className.split('-').slice(1).join('_'));
     }
 
     /**
