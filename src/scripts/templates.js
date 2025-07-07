@@ -1,4 +1,9 @@
+import Configs from './configs.js';
+import Utilities from './utilities.js';
+
 /**
+ * Função responsável por gerar um template para o modo de um jogador.
+ *
  * Sobre:
  *   Um template é uma configuração dos jogadores no campo de futebol,
  *   representado por uma matriz 8x5 (dimensões do campo de futebol), onde:
@@ -35,8 +40,6 @@
  *   - 6 jogadores adversários
  *   - 1 goleiro adversário
  */
-import Utilities from './utilities.js';
-
 export default function getTemplate(task_number) {
     const task_config = {
         1: {half_field: true, has_goalkeeper: false, enemy_count: 5, friend_count: 0},
@@ -45,10 +48,8 @@ export default function getTemplate(task_number) {
         4: {half_field: false, has_goalkeeper: true, enemy_count: 6, friend_count: 3}
     };
     const TASK = task_config[task_number];
-    const ROWS = 8;
-    const COLS = 5;
-    const goalkeeper_position = {y: 0, x: Math.floor(COLS / 2)};
-    let template = Array.from({length: ROWS}, () => Array(COLS).fill(0));
+    const goalkeeper_position = {x: Math.floor(Configs.game.field_cols / 2), y: 0};
+    let template = Array.from({length: Configs.game.field_rows}, () => Array(Configs.game.field_cols).fill(0));
 
     if (TASK.has_goalkeeper) {
         template[goalkeeper_position.y][goalkeeper_position.x] = Utilities.randint(4, 6);
@@ -56,9 +57,9 @@ export default function getTemplate(task_number) {
 
     let positions = [];
 
-    for (let i = 0; i < ROWS - 4 * Number(TASK.half_field); i++) {
-        for (let j = 0; j < COLS; j++) {
-            if (i != goalkeeper_position.y || j != goalkeeper_position.x) {
+    for (let i = 0; i < Configs.game.field_rows - 4 * Number(TASK.half_field); i++) {
+        for (let j = 0; j < Configs.game.field_cols; j++) {
+            if (i !== goalkeeper_position.y || j !== goalkeeper_position.x) {
                 positions.push([i, j]);
             }
         }
@@ -71,9 +72,9 @@ export default function getTemplate(task_number) {
     positions.splice(main_player_index, 1);
 
     function canAddEnemy(i, j) {
-        const dy = task_number == 1 ? [0, 1, 0] : [-1, 0, 1, 0];
-        const dx = task_number == 1 ? [-1, 0, 1] : [0, 1, 0, -1];
-        let vis = Array.from({length: ROWS - 4 * Number(TASK.half_field)}, () => Array(COLS).fill(false));
+        const dy = task_number === 1 ? [0, 1, 0] : [-1, 0, 1, 0];
+        const dx = task_number === 1 ? [-1, 0, 1] : [0, 1, 0, -1];
+        let vis = Array.from({length: Configs.game.field_rows}, () => Array(Configs.game.field_cols).fill(false));
         template[i][j] = 3;
 
         function dfs(i, j) {
@@ -83,13 +84,17 @@ export default function getTemplate(task_number) {
                 let _i = i + dy[k];
                 let _j = j + dx[k];
 
-                if (_i < ROWS - 4 * Number(TASK.half_field) && _j < COLS && 0 <= Math.min(_i, _j) && !vis[_i][_j] && (template[_i][_j] == 0 || template[_i][_j] == 2)) {
+                let check = _i < Configs.game.field_rows - 4 * Number(TASK.half_field);
+                check &&= _j < Configs.game.field_cols && 0 <= Math.min(_i, _j);
+                check &&= !vis[_i][_j] && (template[_i][_j] == 0 || template[_i][_j] == 2);
+
+                if (check) {
                     dfs(_i, _j);
                 }
             }
         }
 
-        dfs(0, Math.floor(COLS / 2));
+        dfs(goalkeeper_position.y, goalkeeper_position.x);
         template[i][j] = 0;
         return vis[main_player_row][main_player_col];
     }

@@ -1,3 +1,6 @@
+/**
+ * Classe contendo funções diversas para outras partes do projeto.
+ */
 export default class Utilities {
     /**
      * Retorna um inteiro pseudo-aleatório no intervalo [min, max].
