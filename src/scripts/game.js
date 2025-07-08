@@ -27,7 +27,7 @@ class PlayerInfo {
                 Array(cols)));
         this.player_pointer_grid = Array.from({length: 2}, () =>
             Array.from({length: rows}, () =>
-                Array(cols)));
+                Array(cols).fill(-1)));
         this.player_list = [];
         this.player_characters_ptrs.blue = 0;
         this.player_characters_ptrs.red = 0;
@@ -73,6 +73,46 @@ class PlayerInfo {
             }
         }
     }
+
+    changePlayerPosition(cy, cx) {
+        const y = this.main_player_pos.y;
+        const x = this.main_player_pos.x;
+        const player_ptr = this.player_pointer_grid[0][y][x];
+        this.player_list[player_ptr].y = this.canvas_positions.y[y + cy];
+        this.player_list[player_ptr].x = this.canvas_positions.x[x + cx];
+        this.player_type_grid[0][y + cy][x + cx] = 2;
+        this.player_type_grid[0][y][x] = 0;
+        this.player_pointer_grid[0][y + cy][x + cx] = this.player_pointer_grid[0][y][x];
+        this.player_pointer_grid[0][y][x] = -1;
+        this.main_player_pos.y = y + cy;
+        this.main_player_pos.x = x + cx;
+    }
+
+    processMove(move) {
+        const rows = this.player_type_grid[0].length;
+        const cols = this.player_type_grid[0][0].length;
+        const y = this.main_player_pos.y;
+        const x = this.main_player_pos.x;
+        switch(move) {
+            case 'player_move_up':
+                if (y - 1 < 0 || this.player_type_grid[0][y - 1][x] !== 0) return false;
+                this.changePlayerPosition(-1, 0);
+                break;
+            case 'player_move_right':
+                if (cols <= x + 1 || this.player_type_grid[0][y][x + 1] !== 0) return false;
+                this.changePlayerPosition(0, 1);
+                break;
+            case 'player_move_down':
+                if (rows <= y + 1 || this.player_type_grid[0][y + 1][x] !== 0) return false;
+                this.changePlayerPosition(1, 0);
+                break;
+            case 'player_move_left':
+                if (x - 1 < 0 || this.player_type_grid[0][y][x - 1] !== 0) return false;
+                this.changePlayerPosition(0, -1);
+                break;
+        }
+        return true;
+    }
 }
 
 export class SinglePlayerGame {
@@ -115,6 +155,7 @@ export class SinglePlayerGame {
      */
     generateTemplate = () => {
         this.player_info.setPlayers(getTemplate(this.task_number));
+        Interface.deleteAllMoves();
     }
 
     /**
@@ -134,13 +175,22 @@ export class SinglePlayerGame {
             return;
         }
         this.getMoveset();
-        for (const move of this.moveset) {
-            if (!this.player_info.makeMove(move)) {
-                alert('comando impossivel.');
+        this.player_info.setPlayers();
+        let i = 0;
+        const step = () => {
+            const move = this.moveset[i];
+            if (!this.player_info.processMove(move)) {
+                alert('comando impossível.');
+                this.player_info.copyGrid();
                 this.player_info.setPlayers();
                 return;
             }
-            this.standBy();
-        }
-    }
+            this.drawEntities();
+            if (++i < this.moveset.length) {
+                setTimeout(step, Configs.game.delay);
+            }
+        };
+
+        step();
+    };
 }

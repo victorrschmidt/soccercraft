@@ -22,6 +22,7 @@ export default class Configs {
         display_max_commands: 24
     };
     static game = {
+        delay: 500,
         field_rows: 8,
         field_cols: 5
     };

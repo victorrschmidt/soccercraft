@@ -18,7 +18,7 @@ export default class Interface {
         Interface.play_button.addEventListener('click', () => { fplay(); });
         Interface.restart_button.addEventListener('click', () => { frestart(); });
         Interface.team_button.addEventListener('click', () => { fteam(); });
-        Interface.erase_button.addEventListener('click', Interface.deleteMove);
+        Interface.erase_button.addEventListener('click', Interface.deleteLastMove);
         for (const button of Interface.move_buttons) {
             button.addEventListener('click', () => { Interface.addMove(button.id); });
         }
@@ -59,8 +59,17 @@ export default class Interface {
      * Remove o último movimento da lista de movimentos do display.
      * O último elemento <img> na <div> do display é removida.
      */
-    static deleteMove() {
+    static deleteLastMove() {
         if (Interface.getMoveAmount() !== 0) {
+            Interface.moveset_display.removeChild(Interface.moveset_display.lastChild);
+        }
+    }
+
+    /**
+     * Remove todos os movimento da lista de movimentos do display.
+     */
+    static deleteAllMoves() {
+        while (Interface.getMoveAmount() !== 0) {
             Interface.moveset_display.removeChild(Interface.moveset_display.lastChild);
         }
     }
