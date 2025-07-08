@@ -8,10 +8,6 @@ import Utilities from './utilities.js';
  *   Um template é uma configuração dos jogadores no campo de futebol,
  *   representado por uma matriz 8x5 (dimensões do campo de futebol), onde:
  *
- *   task_templates[i][j] = j-ésimo template para a tarefa i
- *
- *   Cada template é uma matriz m, onde:
- *
  *   m[i][j] = 0 <=> Espaço vazio
  *   m[i][j] = 1 <=> Jogador aliado
  *   m[i][j] = 2 <=> Jogador aliado que começa com a bola
@@ -47,9 +43,14 @@ export default function getTemplate(task_number) {
         3: {half_field: false, has_goalkeeper: false, enemy_count: 6, friend_count: 3},
         4: {half_field: false, has_goalkeeper: true, enemy_count: 6, friend_count: 3}
     };
+
     const TASK = task_config[task_number];
-    const goalkeeper_position = {x: Math.floor(Configs.game.field_cols / 2), y: 0};
-    let template = Array.from({length: Configs.game.field_rows}, () => Array(Configs.game.field_cols).fill(0));
+    const ROWS = Configs.game.field_rows;
+    const USED_ROWS = ROWS / (1 + Number(TASK.half_field));
+    const COLS = Configs.game.field_cols;
+    const goalkeeper_position = {x: Math.floor(COLS / 2), y: 0};
+
+    let template = Array.from({length: ROWS}, () => Array(COLS).fill(0));
 
     if (TASK.has_goalkeeper) {
         template[goalkeeper_position.y][goalkeeper_position.x] = Utilities.randint(4, 6);
@@ -57,8 +58,8 @@ export default function getTemplate(task_number) {
 
     let positions = [];
 
-    for (let i = 0; i < Configs.game.field_rows - 4 * Number(TASK.half_field); i++) {
-        for (let j = 0; j < Configs.game.field_cols; j++) {
+    for (let i = 0; i < USED_ROWS; i++) {
+        for (let j = 0; j < COLS; j++) {
             if (i !== goalkeeper_position.y || j !== goalkeeper_position.x) {
                 positions.push([i, j]);
             }
@@ -74,7 +75,7 @@ export default function getTemplate(task_number) {
     function canAddEnemy(i, j) {
         const dy = task_number === 1 ? [0, 1, 0] : [-1, 0, 1, 0];
         const dx = task_number === 1 ? [-1, 0, 1] : [0, 1, 0, -1];
-        let vis = Array.from({length: Configs.game.field_rows}, () => Array(Configs.game.field_cols).fill(false));
+        let vis = Array.from({length: ROWS}, () => Array(COLS).fill(false));
         template[i][j] = 3;
 
         function dfs(i, j) {
@@ -84,9 +85,11 @@ export default function getTemplate(task_number) {
                 let _i = i + dy[k];
                 let _j = j + dx[k];
 
-                let check = _i < Configs.game.field_rows - 4 * Number(TASK.half_field);
-                check &&= _j < Configs.game.field_cols && 0 <= Math.min(_i, _j);
-                check &&= !vis[_i][_j] && (template[_i][_j] == 0 || template[_i][_j] == 2);
+                let check = 0 <= Math.min(_i, _j);
+                check &&= _i < USED_ROWS;
+                check &&= _j < COLS;
+                check &&= !vis[_i][_j];
+                check &&= (template[_i][_j] == 0 || template[_i][_j] == 2);
 
                 if (check) {
                     dfs(_i, _j);

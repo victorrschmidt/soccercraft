@@ -8,7 +8,6 @@ Tarefa 4 - Chutar em diferentes posições + goleiro
 */
 
 import Interface from './interface.js';
-import Entity from './entity.js';
 import { SinglePlayerGame } from './game.js';
 
 const TASK_NUMBER = Number(window.location.pathname.split('/').pop()[6]);
