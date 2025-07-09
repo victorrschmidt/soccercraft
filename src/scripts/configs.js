@@ -22,8 +22,14 @@ export default class Configs {
         display_max_commands: 24
     };
     static game = {
-        delay: 500,
+        frame_delay: 500,
         field_rows: 8,
-        field_cols: 5
+        field_cols: 5,
+        tasks: {
+            1: {half_field: true, has_goalkeeper: false, enemy_count: 5, friend_count: 0},
+            2: {half_field: false, has_goalkeeper: false, enemy_count: 8, friend_count: 0},
+            3: {half_field: false, has_goalkeeper: false, enemy_count: 6, friend_count: 3},
+            4: {half_field: false, has_goalkeeper: true, enemy_count: 6, friend_count: 3}
+        }
     };
 }
