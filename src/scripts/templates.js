@@ -47,56 +47,49 @@ export default class Template {
         this.player_list = undefined;
         this.rows = Configs.game.field_rows;
         this.cols = Configs.game.field_cols;
-        this.used_rows = this.rows;
-        this.canvas_positions = {
-            x: [42, 122, 206, 288, 370],
-            y: [36, 103, 172, 240, 310, 378, 447, 515],
-            goalkeeper: {x: 206, y: 12}
-        };
-        this.goalkeeper_position = {x: Math.floor(this.cols / 2), y: 0};
-        this.main_player_position = {x: undefined, y: undefined};
+        this.used_rows = this.rows / (1 + Number(this.task.half_field));
         this.friend_team = 'blue';
         this.enemy_team = 'red';
         this.player_characters_ptrs = {'blue': 0, 'red': 0};
-        this.vis = undefined;
-        this.dy = undefined;
-        this.dx = undefined;
+        this.main_player_position = {y: undefined, x: undefined};
+        this.goalkeeper_position = {y: 0, x: Math.floor(this.cols / 2)};
+        this.canvas_positions = {
+            y: [36, 103, 172, 240, 310, 378, 447, 515],
+            x: [42, 122, 206, 288, 370]
+        };
     }
 
     canAddEnemy(y, x) {
-        this.dy = this.task_number === 1 ? [0, 1, 0] : [-1, 0, 1, 0];
-        this.dx = this.task_number === 1 ? [-1, 0, 1] : [0, 1, 0, -1];
-        this.vis = Array.from({length: this.rows}, () => Array(this.cols).fill(false));
         this.player_type_grid[1][y][x] = 3;
-        this.dfs(this.goalkeeper_position.y, this.goalkeeper_position.x);
-        this.player_type_grid[1][y][x] = 0;
-        return this.vis[this.main_player_position.y][this.main_player_position.x];
-    }
-
-    dfs(i, j) {
-        this.vis[i][j] = true;
-        for (let k = 0; k < this.dy.length; k++) {
-            let _i = i + this.dy[k];
-            let _j = j + this.dx[k];
-            let check = 0 <= Math.min(_i, _j);
-            check &&= _i < this.used_rows;
-            check &&= _j < this.cols;
-            check &&= !this.vis[_i][_j];
-            check &&= (this.player_type_grid[1][_i][_j] == 0 || this.player_type_grid[1][_i][_j] == 2);
-            if (check) {
-                this.dfs(_i, _j);
+        const dy = this.task_number === 1 ? [0, -1, 0] : [0, -1, 0, 1];
+        const dx = this.task_number === 1 ? [-1, 0, 1] : [-1, 0, 1, 0];
+        let position_queue = [[this.main_player_position.y, this.main_player_position.x]];
+        let visited_grid = Array.from({length: this.rows}, () => Array(this.cols).fill(false));
+        visited_grid[this.main_player_position.y][this.main_player_position.x] = true;
+        while (position_queue.length) {
+            let [i, j] = position_queue.pop();
+            for (let k = 0; k < dy.length; k++) {
+                let _y = i + dy[k];
+                let _x = j + dx[k];
+                let check = 0 <= Math.min(_y, _x);
+                check &&= _y < this.rows;
+                check &&= _x < this.cols;
+                check &&= !visited_grid[_y][_x];
+                check &&= this.player_type_grid[1][_y][_x] === 0 || this.player_type_grid[1][_y][_x] === 2;
+                if (check) {
+                    position_queue.push([_y, _x]);
+                    visited_grid[_y][_x] = true;
+                }
             }
         }
+        this.player_type_grid[1][y][x] = 0;
+        return visited_grid[this.goalkeeper_position.y][this.goalkeeper_position.x];
     }
 
     generatePlayerTypeGrid() {
-        const used_rows = this.rows / (1 + Number(this.task.half_field));
         this.player_type_grid = Array.from({length: 2}, () => Array.from({length: this.rows}, () => Array(this.cols).fill(0)));
-        if (this.task.has_goalkeeper) {
-            this.player_type_grid[1][this.goalkeeper_position.y][this.goalkeeper_position.x] = Utilities.randint(4, 6);
-        }
         let positions = [];
-        for (let i = 0; i < used_rows; i++) {
+        for (let i = 0; i < this.used_rows; i++) {
             for (let j = 0; j < this.cols; j++) {
                 if (i !== this.goalkeeper_position.y || j !== this.goalkeeper_position.x) {
                     positions.push([i, j]);
@@ -124,13 +117,6 @@ export default class Template {
             this.player_type_grid[1][y][x] = 3;
             positions.splice(available_positions[index], 1);
         }
-        for (let i = 0; i < this.task.friend_count; i++) {
-            let index = Utilities.randint(0, positions.length - 1);
-            let y = positions[index][0];
-            let x = positions[index][1];
-            this.player_type_grid[1][y][x] = 1;
-            positions.splice(index, 1);
-        }
     }
 
     copyGrids() {
@@ -156,24 +142,20 @@ export default class Template {
                 this.player_ptr_grid[i][j] = ptr++;
                 let team = n < 3 ? this.friend_team : this.enemy_team;
                 let src = `${Configs.assets.path}/player_${team}_${this.player_characters_ptrs[team] + 1}.png`;
-                let x = this.canvas_positions.x[j];
                 let y = this.canvas_positions.y[i];
+                let x = this.canvas_positions.x[j];
                 this.player_characters_ptrs[team]++;
-                this.player_list.push(new Entity(
-                    src, x, y,
-                    Configs.assets.game_player_default_size.width,
-                    Configs.assets.game_player_default_size.height,
-                ));
+                this.player_list.push(new Entity(src, x, y, Configs.assets.game_player_default_size.width, Configs.assets.game_player_default_size.height));
             }
         }
     }
 
-    resetTemplate() {
+    resetCurrentTemplate() {
         this.copyGrids();
         this.generatePlayerList();
     }
 
-    generateTemplate() {
+    generateNewTemplate() {
         this.generatePlayerTypeGrid();
         this.resetTemplate();
     }
@@ -181,43 +163,5 @@ export default class Template {
     changeTeam() {
         [this.friend_team, this.enemy_team] = [this.enemy_team, this.friend_team];
         this.generatePlayerList();
-    }
-
-    changePlayerPosition(cy, cx) {
-        const y = this.main_player_position.y;
-        const x = this.main_player_position.x;
-        const player_ptr = this.player_ptr_grid[y][x];
-        this.player_list[player_ptr].y = this.canvas_positions.y[y + cy];
-        this.player_list[player_ptr].x = this.canvas_positions.x[x + cx];
-        this.player_type_grid[0][y + cy][x + cx] = 2;
-        this.player_type_grid[0][y][x] = 0;
-        this.player_ptr_grid[y + cy][x + cx] = this.player_ptr_grid[y][x];
-        this.player_ptr_grid[y][x] = -1;
-        this.main_player_position.y = y + cy;
-        this.main_player_position.x = x + cx;
-    }
-
-    processMove(move) {
-        const y = this.main_player_position.y;
-        const x = this.main_player_position.x;
-        switch(move) {
-            case 'player_move_up':
-                if (y - 1 < 0 || this.player_type_grid[0][y - 1][x] !== 0) return false;
-                this.changePlayerPosition(-1, 0);
-                break;
-            case 'player_move_right':
-                if (this.cols <= x + 1 || this.player_type_grid[0][y][x + 1] !== 0) return false;
-                this.changePlayerPosition(0, 1);
-                break;
-            case 'player_move_down':
-                if (this.rows <= y + 1 || this.player_type_grid[0][y + 1][x] !== 0) return false;
-                this.changePlayerPosition(1, 0);
-                break;
-            case 'player_move_left':
-                if (x - 1 < 0 || this.player_type_grid[0][y][x - 1] !== 0) return false;
-                this.changePlayerPosition(0, -1);
-                break;
-        }
-        return true;
     }
 }
