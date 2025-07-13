@@ -1,7 +1,7 @@
 /* Global */
 :root {
-  --light-green: #329635;
   --default-green: #366B37;
+  --light-green: #329635;
   --dark-green: #2B332B;
   --light-grey: #D3D3D3;
   --link-blue: #0047AB;
@@ -190,7 +190,7 @@ main {
 #main-content-game-controls-buttons > * > *:hover {
   transform: translateY(-2px);
 }
-#main-content-tutorial-paragraphs {
+#main-content-tutorial {
   background-color: var(--light-green);
   color: var(--dark-green);
   outline: solid var(--default-green) 4px;
@@ -203,19 +203,19 @@ main {
   padding: 32px;
   border-radius: 4px;
 }
-#main-content-tutorial-paragraphs > section {
+#main-content-tutorial > section {
   display: flex;
   flex-direction: column;
   width: 100.0%;
   gap: 12px;
 }
-#main-content-tutorial-paragraphs > section > h2 {
+#main-content-tutorial > section > h2 {
   font-size: 1.8em;
 }
-#main-content-tutorial-paragraphs > section > p {
+#main-content-tutorial > section > p {
   font-size: 1.1em;
 }
-#main-content-tutorial-paragraphs > section > p > a {
+#main-content-tutorial > section > p > a {
   color: var(--link-blue);
 }
 

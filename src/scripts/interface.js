@@ -39,7 +39,7 @@ export default class Interface {
     }
 
     /**
-     * Adiciona um movimento à lista de movimentos do display. O movimento no display é um elemento <img>.
+     * Adiciona um movimento à lista de movimentos do display.
      */
     static addMove(id) {
         if (Interface.getMoveAmount() === Configs.html.display_max_commands) {

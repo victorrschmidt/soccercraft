@@ -68,6 +68,33 @@ export default class Template {
         this.player_list.push(new Player(src, x, y, width, height, team));
     }
 
+    canAddEnemy(x, y) {
+        const dy = this.task_number === 1 ? [0, -1, 0] : [0, -1, 0, 1];
+        const dx = this.task_number === 1 ? [-1, 0, 1] : [-1, 0, 1, 0];
+        let queue = [[this.main_player_position.y, this.main_player_position.x]];
+        let visited = Array.from({length: this.rows}, () => Array(this.cols).fill(false));
+        visited[this.main_player_position.y][this.main_player_position.x] = true;
+        this.player_ptr_grid[1][y][x] = 1;
+        while (queue.length) {
+            let [i, j] = queue.pop();
+            for (let k = 0; k < dy.length; k++) {
+                let _i = i + dy[k];
+                let _j = j + dx[k];
+                let check = 0 <= Math.min(_i, _j);
+                check &&= _i < this.rows;
+                check &&= _j < this.cols;
+                check &&= !visited[_i][_j];
+                check &&= this.player_ptr_grid[1][_i][_j] === -1;
+                if (check) {
+                    visited[_i][_j] = true;
+                    queue.push([_i, _j]);
+                }
+            }
+        }
+        this.player_ptr_grid[1][y][x] = -1;
+        return visited[this.goalkeeper_position.y][this.goalkeeper_position.x];
+    }
+
     copyGrids() {
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
@@ -111,32 +138,5 @@ export default class Template {
     changeTeam() {
         [this.friend_team, this.enemy_team] = [this.enemy_team, this.friend_team];
         this.reconfigurePlayerList(true);
-    }
-
-    canAddEnemy(x, y) {
-        const dy = this.task_number === 1 ? [0, -1, 0] : [0, -1, 0, 1];
-        const dx = this.task_number === 1 ? [-1, 0, 1] : [-1, 0, 1, 0];
-        let queue = [[this.main_player_position.y, this.main_player_position.x]];
-        let visited = Array.from({length: this.rows}, () => Array(this.cols).fill(false));
-        visited[this.main_player_position.y][this.main_player_position.x] = true;
-        this.player_ptr_grid[1][y][x] = 1;
-        while (queue.length) {
-            let [i, j] = queue.pop();
-            for (let k = 0; k < dy.length; k++) {
-                let _i = i + dy[k];
-                let _j = j + dx[k];
-                let check = 0 <= Math.min(_i, _j);
-                check &&= _i < this.rows;
-                check &&= _j < this.cols;
-                check &&= !visited[_i][_j];
-                check &&= this.player_ptr_grid[1][_i][_j] === -1;
-                if (check) {
-                    visited[_i][_j] = true;
-                    queue.push([_i, _j]);
-                }
-            }
-        }
-        this.player_ptr_grid[1][y][x] = -1;
-        return visited[this.goalkeeper_position.y][this.goalkeeper_position.x];
     }
 }
