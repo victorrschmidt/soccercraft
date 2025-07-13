@@ -39,8 +39,7 @@ export default class Interface {
     }
 
     /**
-     * Adiciona um movimento à lista de movimentos do display.
-     * O movimento no display é um elemento <img>.
+     * Adiciona um movimento à lista de movimentos do display. O movimento no display é um elemento <img>.
      */
     static addMove(id) {
         if (Interface.getMoveAmount() === Configs.html.display_max_commands) {
@@ -57,7 +56,6 @@ export default class Interface {
 
     /**
      * Remove o último movimento da lista de movimentos do display.
-     * O último elemento <img> na <div> do display é removida.
      */
     static deleteLastMove() {
         if (Interface.getMoveAmount() !== 0) {
@@ -66,7 +64,7 @@ export default class Interface {
     }
 
     /**
-     * Remove todos os movimento da lista de movimentos do display.
+     * Remove todos os movimentos da lista de movimentos do display.
      */
     static deleteAllMoves() {
         while (Interface.getMoveAmount() !== 0) {

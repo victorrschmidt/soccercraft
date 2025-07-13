@@ -1,5 +1,5 @@
 /**
- * Classe contendo configurações globais sobre os arquivos do projeto.
+ * Classe contendo configurações globais dos arquivos do projeto.
  */
 export default class Configs {
     static assets = {
