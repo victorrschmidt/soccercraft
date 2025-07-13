@@ -1,5 +1,5 @@
 /**
- * Classe contendo funções diversas para outras partes do projeto.
+ * Classe contendo funções para outras partes do projeto.
  */
 export default class Utilities {
     /**

@@ -8,7 +8,7 @@ Esta é uma versão digital do jogo homônimo desenvolvido no ano de 2017.
 
 ## Habilidades relacionadas
 
-- Desenvolvimento de algoritmos sequenciais
+- Noções de algoritmos sequenciais
 - Noções de matrizes
 - Noções de caminhos em matrizes
 - Noções de otimização e caminho mínimo

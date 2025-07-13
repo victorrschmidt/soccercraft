@@ -31,7 +31,7 @@ export class SinglePlayerGame {
         }
     }
 
-    drawEntities = () => {
+    drawEntities() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.background.draw(this.ctx);
         for (const player of this.template.player_list) {
@@ -43,24 +43,25 @@ export class SinglePlayerGame {
         let stop = true;
         if (this.moves < this.move_count) {
             this.moves++;
-            this.template.player_list[0].x -= 20;
+            this.template.player_list[0].x -= 2;
             stop = false;
         }
         this.drawEntities();
         if (stop) {
+            console.log('FIM');
             return;
         }
         requestAnimationFrame(this.animate);
+    }
+
+    getMoveset() {
+        this.moveset = Interface.getMoveList();
     }
 
     generateTemplate = () => {
         this.template.generateNewTemplate();
         this.loadImages();
         Interface.deleteAllMoves();
-    }
-
-    getMoveset() {
-        this.moveset = Interface.getMoveList();
     }
 
     changeTeam = () => {
@@ -70,7 +71,7 @@ export class SinglePlayerGame {
 
     play = () => {
         this.moves = 0;
-        this.move_count = 3;
+        this.move_count = 180;
         this.animate();
     }
 }
