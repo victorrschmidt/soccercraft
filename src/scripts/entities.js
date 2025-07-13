@@ -9,17 +9,13 @@ export class Entity {
         this.y = y;
         this.width = width;
         this.height = height;
-        this.loaded = false;
-        this.image.onload = () => { this.loaded = true; };
     }
 
     /**
      * Renderiza a entidade.
      */
     draw(ctx) {
-        if (this.loaded) {
-            ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-        }
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
 }
 

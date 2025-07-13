@@ -45,7 +45,6 @@ export default class Interface {
         if (Interface.getMoveAmount() === Configs.html.display_max_commands) {
             return;
         }
-
         const element = document.createElement('img');
         element.className = `display-${id}`;
         element.src = `${Configs.assets.path}/${id.split('-').join('_')}.png`;

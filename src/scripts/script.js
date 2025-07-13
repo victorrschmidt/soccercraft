@@ -21,7 +21,6 @@
  */
 
 import Interface from './interface.js';
-import Template from './template.js';
 import { SinglePlayerGame } from './game.js';
 
 const TASK_NUMBER = Number(window.location.pathname.split('/').pop()[6]);

@@ -9,39 +9,68 @@ export class SinglePlayerGame {
         this.canvas = document.getElementById(Configs.html.main_content_game_screen_canvas);
         this.ctx = this.canvas.getContext('2d');
         this.background = new Entity(`${Configs.assets.path}/${Configs.assets.background_file_name}`, 0, 0, this.canvas.width, this.canvas.height);
+        this.background.image.onload = this.checkLoadedImages;
         this.template = new Template(task_number);
         this.moveset = undefined;
+        this.loaded_images = undefined;
+        this.total_images = undefined;
     }
 
-    /**
-     * Pega a lista de movimentos da interface atual.
-     */
-    getMoveset() {
-        this.moveset = Interface.getMoveList();
+    loadImages() {
+        this.loaded_images = Number(this.background.image.complete);
+        this.total_images = this.template.player_list.length + 1;
+        for (const player of this.template.player_list) {
+            player.image.onload = this.checkLoadedImages;
+        }
     }
 
-    /**
-     * Gera um template (configuração de posição dos jogadores) para o jogo.
-     */
-    generateTemplate = () => {
-        this.template.generateNewTemplate();
-        Interface.deleteAllMoves();
+    checkLoadedImages = () => {
+        this.loaded_images++;
+        if (this.loaded_images === this.total_images) {
+            this.drawEntities();
+        }
     }
 
-    /**
-     * Muda o time que o aluno está controlando.
-     */
-    changeTeam = () => {
-        this.template.changeTeam();
-    }
-
-    /**
-     * Desenha as entidades no canvas.
-     */
-    drawEntities() {
+    drawEntities = () => {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.background.draw(this.ctx);
         for (const player of this.template.player_list) {
             player.draw(this.ctx);
         }
+    }
+
+    animate = () => {
+        let stop = true;
+        if (this.moves < this.move_count) {
+            this.moves++;
+            this.template.player_list[0].x -= 20;
+            stop = false;
+        }
+        this.drawEntities();
+        if (stop) {
+            return;
+        }
+        requestAnimationFrame(this.animate);
+    }
+
+    generateTemplate = () => {
+        this.template.generateNewTemplate();
+        this.loadImages();
+        Interface.deleteAllMoves();
+    }
+
+    getMoveset() {
+        this.moveset = Interface.getMoveList();
+    }
+
+    changeTeam = () => {
+        this.template.changeTeam();
+        this.loadImages();
+    }
+
+    play = () => {
+        this.moves = 0;
+        this.move_count = 3;
+        this.animate();
     }
 }
