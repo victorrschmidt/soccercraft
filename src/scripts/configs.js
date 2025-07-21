@@ -12,7 +12,7 @@ export default class Configs {
         }
     };
     static html = {
-        main_content_game_screen_canvas: 'main-content-game-screen-canvas',
+        game_canvas: 'main-content-game-screen-canvas',
         moveset_display: 'main-content-game-controls-display',
         play_button: 'play-button',
         restart_button: 'restart-button',

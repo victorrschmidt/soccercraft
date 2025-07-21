@@ -6,7 +6,7 @@ import { Entity } from './entities.js';
 export class SinglePlayerGame {
     constructor(task_number) {
         this.task_number = task_number;
-        this.canvas = document.getElementById(Configs.html.main_content_game_screen_canvas);
+        this.canvas = document.getElementById(Configs.html.game_canvas);
         this.ctx = this.canvas.getContext('2d');
         this.background = new Entity(`${Configs.assets.path}/${Configs.assets.background_file_name}`, 0, 0, this.canvas.width, this.canvas.height);
         this.background.image.onload = this.checkLoadedImages;
