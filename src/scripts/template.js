@@ -7,6 +7,7 @@ export default class Template {
         this.task_number = task_number;
         this.task = Configs.game.tasks[task_number];
         this.player_ptr_grid = undefined;
+        this.player_ptr_grid_copy = undefined;
         this.player_list = undefined;
         this.rows = Configs.game.field_rows;
         this.cols = Configs.game.field_cols;
@@ -20,7 +21,41 @@ export default class Template {
     }
 
     generateNewTemplate() {
-        this.player_ptr_grid = Array.from({length: 2}, () => Array.from({length: this.rows}, () => Array(this.cols).fill(-1)));
+        const canAddEnemy = (x, y) => {
+            let queue = [[this.main_player_position.y, this.main_player_position.x]];
+            let visited = Array.from({length: this.rows}, () => Array(this.cols).fill(false));
+            visited[this.main_player_position.y][this.main_player_position.x] = true;
+            this.player_ptr_grid_copy[y][x] = 1;
+            while (queue.length) {
+                let [i, j] = queue.pop();
+                for (let k = 0; k < dy.length; k++) {
+                    let _i = i + dy[k];
+                    let _j = j + dx[k];
+                    let check = 0 <= Math.min(_i, _j);
+                    check &&= _i < this.rows;
+                    check &&= _j < this.cols;
+                    check &&= !visited[_i][_j];
+                    check &&= this.player_ptr_grid_copy[_i][_j] === -1;
+                    if (check) {
+                        visited[_i][_j] = true;
+                        queue.push([_i, _j]);
+                    }
+                }
+            }
+            this.player_ptr_grid_copy[y][x] = -1;
+            return visited[this.goalkeeper_position.y][this.goalkeeper_position.x];
+        }
+        const addToPlayerList = (x, y, team) => {
+            const src = `${Configs.assets.path}/player_${team}_${this.team_info[team].asset_ptr + 1}.png`;
+            const width = Configs.assets.game_player_default_size.width;
+            const height = Configs.assets.game_player_default_size.height;
+            y = this.canvas_positions.y[y];
+            x = this.canvas_positions.x[x];
+            this.team_info[team].asset_ptr++;
+            this.player_list.push(new Player(src, x, y, width, height, team));
+        }
+        this.player_ptr_grid = Array.from({length: this.rows}, () => Array(this.cols).fill(-1));
+        this.player_ptr_grid_copy = Array.from({length: this.rows}, () => Array(this.cols).fill(-1));
         this.player_list = [];
         this.team_info['blue'].asset_ptr = 0;
         this.team_info['red'].asset_ptr = 0;
@@ -35,37 +70,13 @@ export default class Template {
         const main_player_index = Utilities.randint(0, positions.length - 1);
         const main_player_row = positions[main_player_index][0];
         const main_player_col = positions[main_player_index][1];
-        this.player_ptr_grid[1][main_player_row][main_player_col] = 0;
+        this.player_ptr_grid_copy[main_player_row][main_player_col] = 0;
         this.main_player_position.y = main_player_row;
         this.main_player_position.x = main_player_col;
-        this.addToPlayerList(main_player_col, main_player_row, this.friend_team);
+        addToPlayerList(main_player_col, main_player_row, this.friend_team);
         positions.splice(main_player_index, 1);
         const dy = this.task_number === 1 ? [0, -1, 0] : [0, -1, 0, 1];
         const dx = this.task_number === 1 ? [-1, 0, 1] : [-1, 0, 1, 0];
-        const canAddEnemy = (x, y) => {
-            let queue = [[this.main_player_position.y, this.main_player_position.x]];
-            let visited = Array.from({length: this.rows}, () => Array(this.cols).fill(false));
-            visited[this.main_player_position.y][this.main_player_position.x] = true;
-            this.player_ptr_grid[1][y][x] = 1;
-            while (queue.length) {
-                let [i, j] = queue.pop();
-                for (let k = 0; k < dy.length; k++) {
-                    let _i = i + dy[k];
-                    let _j = j + dx[k];
-                    let check = 0 <= Math.min(_i, _j);
-                    check &&= _i < this.rows;
-                    check &&= _j < this.cols;
-                    check &&= !visited[_i][_j];
-                    check &&= this.player_ptr_grid[1][_i][_j] === -1;
-                    if (check) {
-                        visited[_i][_j] = true;
-                        queue.push([_i, _j]);
-                    }
-                }
-            }
-            this.player_ptr_grid[1][y][x] = -1;
-            return visited[this.goalkeeper_position.y][this.goalkeeper_position.x];
-        }
         for (let i = 0, ptr = 1; i < this.task.enemy_count; i++, ptr++) {
             let available_positions = Array(positions.length).fill().map((x, i) => i);
             let index = Utilities.randint(0, available_positions.length - 1);
@@ -77,27 +88,17 @@ export default class Template {
                 y = positions[available_positions[index]][0];
                 x = positions[available_positions[index]][1];
             }
-            this.player_ptr_grid[1][y][x] = ptr;
-            this.addToPlayerList(x, y, this.enemy_team);
+            this.player_ptr_grid_copy[y][x] = ptr;
+            addToPlayerList(x, y, this.enemy_team);
             positions.splice(available_positions[index], 1);
         }
         this.copyGrids();
     }
 
-    addToPlayerList(x, y, team) {
-        const src = `${Configs.assets.path}/player_${team}_${this.team_info[team].asset_ptr + 1}.png`;
-        const width = Configs.assets.game_player_default_size.width;
-        const height = Configs.assets.game_player_default_size.height;
-        y = this.canvas_positions.y[y];
-        x = this.canvas_positions.x[x];
-        this.team_info[team].asset_ptr++;
-        this.player_list.push(new Player(src, x, y, width, height, team));
-    }
-
     copyGrids() {
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
-                this.player_ptr_grid[0][i][j] = this.player_ptr_grid[1][i][j];
+                this.player_ptr_grid[i][j] = this.player_ptr_grid_copy[i][j];
             }
         }
     }
@@ -109,16 +110,20 @@ export default class Template {
         }
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
-                let ptr = this.player_ptr_grid[0][i][j];
+                let ptr = this.player_ptr_grid[i][j];
                 if (ptr === -1) {
                     continue;
+                }
+                if (ptr === 0) {
+                    this.main_player_position.y = i;
+                    this.main_player_position.x = j;
                 }
                 let y = this.canvas_positions.y[i];
                 let x = this.canvas_positions.x[j];
                 let width = Configs.assets.game_player_default_size.width;
                 let height = Configs.assets.game_player_default_size.height;
                 let team = this.player_list[ptr].team;
-                let src = this.player_list[ptr].src;
+                let src = this.player_list[ptr].image.src;
                 if (swap_teams) {
                     team = this.team_info[team].opposite_team;
                     src = `${Configs.assets.path}/player_${team}_${this.team_info[team].asset_ptr + 1}.png`;

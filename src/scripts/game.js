@@ -1,6 +1,7 @@
 import Configs from './configs.js';
 import Interface from './interface.js';
 import Template from './template.js';
+import Move from './move.js';
 import { Entity } from './entities.js';
 
 export class SinglePlayerGame {
@@ -11,7 +12,12 @@ export class SinglePlayerGame {
         this.background = new Entity(`${Configs.assets.path}/${Configs.assets.background_file_name}`, 0, 0, this.canvas.width, this.canvas.height);
         this.background.image.onload = this.checkLoadedImages;
         this.template = new Template(task_number);
+        this.had_invalid_move = undefined;
+        this.has_scored = undefined;
+        this.is_making_move = undefined;
         this.moveset = undefined;
+        this.current_move_id = undefined;
+        this.target_position = {x: undefined, y: undefined};
         this.loaded_images = undefined;
         this.total_images = undefined;
     }
@@ -39,16 +45,67 @@ export class SinglePlayerGame {
         }
     }
 
+    setTargetPosition() {
+        if (this.current_move_id === this.moveset.length) return;
+        const move = this.moveset[this.current_move_id];
+        if (!Move.isValidMove(this.template, move)) {
+            this.had_invalid_move = true;
+            return;
+        }
+        this.is_making_move = true;
+        let y = this.template.main_player_position.y;
+        let x = this.template.main_player_position.x;
+        let ny = y + Move.position_difference[move].y;
+        let nx = x + Move.position_difference[move].x;
+        this.target_position.y = this.template.canvas_positions.y[ny];
+        this.target_position.x = this.template.canvas_positions.x[nx];
+        this.template.main_player_position.y = ny;
+        this.template.main_player_position.x = nx;
+        this.template.player_ptr_grid[y][x] = -1;
+        this.template.player_ptr_grid[ny][nx] = 0;
+    }
+
+    finishedMove() {
+        return this.template.player_list[0].x === this.target_position.x && this.template.player_list[0].y === this.target_position.y;
+    }
+
+    makeMove() {
+        const move = this.moveset[this.current_move_id];
+        Move.makeMove(this.template, move);
+    }
+
+    tryGoal(move) {
+        if (Move.isValidMove(this.template, move)) {
+            this.has_scored = true;
+        }
+    }
+
     animate = () => {
-        let stop = true;
-        if (this.moves < this.move_count) {
-            this.moves++;
-            this.template.player_list[0].x -= 2;
-            stop = false;
+        if (this.is_making_move && !this.finishedMove()) {
+            this.makeMove();
+        }
+        else {
+            this.current_move_id++;
+            if (this.current_move_id === this.moveset.length) {
+                console.log('DERROTA SEM MOVIMENTOS INVÁLIDOS');
+                return;
+            }
+            const move = this.moveset[this.current_move_id];
+            if (!move.startsWith('goal')) {
+                this.setTargetPosition();
+            }
+            else {
+                this.tryGoal(move);
+            }
+            if (this.had_invalid_move) {
+                console.log('DERROTA POR MOVIMENTO INVÁLIDO');
+                this.resetTemplate();
+                return;
+            }
         }
         this.drawEntities();
-        if (stop) {
-            console.log('FIM');
+        if (this.has_scored) {
+            console.log('VITÓRIA');
             return;
         }
         requestAnimationFrame(this.animate);
@@ -64,14 +121,30 @@ export class SinglePlayerGame {
         Interface.deleteAllMoves();
     }
 
+    resetTemplate = () => {
+        Interface.deleteAllMoves();
+        this.template.resetCurrentTemplate();
+        this.drawEntities();
+    }
+
     changeTeam = () => {
         this.template.changeTeam();
         this.loadImages();
     }
 
     play = () => {
-        this.moves = 0;
-        this.move_count = 180;
+        this.getMoveset();
+        this.current_move_id = 0;
+        this.had_invalid_move = false;
+        this.has_scored = false;
+        this.setTargetPosition();
+        console.log('INÍCIO');
+        if (this.had_invalid_move) {
+            console.log('FIM POR MOVIMENTO INVALIDO');
+            this.resetTemplate();
+            return;
+        }
+        this.is_making_move = true;
         this.animate();
     }
 }
