@@ -12,6 +12,7 @@ export class SinglePlayerGame {
         this.background = new Entity(`${Configs.assets.path}/${Configs.assets.background_file_name}`, 0, 0, this.canvas.width, this.canvas.height);
         this.background.image.onload = this.checkLoadedImages;
         this.template = new Template(task_number);
+        this.template.ball.image.onload = this.checkLoadedImages;
         this.had_invalid_move = undefined;
         this.has_scored = undefined;
         this.is_making_move = undefined;
@@ -23,8 +24,8 @@ export class SinglePlayerGame {
     }
 
     loadImages() {
-        this.loaded_images = Number(this.background.image.complete);
-        this.total_images = this.template.player_list.length + 1;
+        this.loaded_images = Number(this.background.image.complete) + Number(this.template.ball.image.complete);
+        this.total_images = this.template.player_list.length + 2;
         for (const player of this.template.player_list) {
             player.image.onload = this.checkLoadedImages;
         }
@@ -40,6 +41,7 @@ export class SinglePlayerGame {
     drawEntities() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.background.draw(this.ctx);
+        this.template.ball.draw(this.ctx);
         for (const player of this.template.player_list) {
             player.draw(this.ctx);
         }
@@ -80,7 +82,7 @@ export class SinglePlayerGame {
         }
     }
 
-    animate = () => {
+    run = () => {
         if (this.is_making_move && !this.finishedMove()) {
             this.makeMove();
         }
@@ -91,7 +93,7 @@ export class SinglePlayerGame {
                 return;
             }
             const move = this.moveset[this.current_move_id];
-            if (!move.startsWith('goal')) {
+            if (!move.startsWith('goal_kick')) {
                 this.setTargetPosition();
             }
             else {
@@ -108,7 +110,7 @@ export class SinglePlayerGame {
             console.log('VITÓRIA');
             return;
         }
-        requestAnimationFrame(this.animate);
+        requestAnimationFrame(this.run);
     }
 
     getMoveset() {
@@ -145,6 +147,6 @@ export class SinglePlayerGame {
             return;
         }
         this.is_making_move = true;
-        this.animate();
+        this.run();
     }
 }

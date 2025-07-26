@@ -5,10 +5,15 @@ export default class Configs {
     static assets = {
         path: '../assets',
         background_file_name: 'background.png',
+        ball_file_name: 'ball.png',
         display_icon_default_size: 40,
         game_player_default_size: {
             width: 33,
             height: 65
+        },
+        ball_default_size: {
+            width: 16,
+            height: 16
         }
     };
     static html = {

@@ -1,6 +1,6 @@
 import Configs from './configs.js';
 import Utilities from './utilities.js';
-import { Player } from './entities.js';
+import { Entity, Player } from './entities.js';
 
 export default class Template {
     constructor(task_number) {
@@ -18,6 +18,8 @@ export default class Template {
         this.main_player_position = {x: undefined, y: undefined};
         this.goalkeeper_position = {x: Math.floor(this.cols / 2), y: 0};
         this.canvas_positions = {x: [42, 122, 206, 288, 370], y: [36, 103, 172, 240, 310, 378, 447, 515]};
+        this.canvas_ball_diff = {x: 36, y: 48};
+        this.ball = new Entity(`${Configs.assets.path}/${Configs.assets.ball_file_name}`, 0, 0, Configs.assets.ball_default_size.width, Configs.assets.ball_default_size.height);
     }
 
     generateNewTemplate() {
@@ -73,6 +75,7 @@ export default class Template {
         this.player_ptr_grid_copy[main_player_row][main_player_col] = 0;
         this.main_player_position.y = main_player_row;
         this.main_player_position.x = main_player_col;
+        this.defineBallPosition(main_player_col, main_player_row);
         addToPlayerList(main_player_col, main_player_row, this.friend_team);
         positions.splice(main_player_index, 1);
         const dy = this.task_number === 1 ? [0, -1, 0] : [0, -1, 0, 1];
@@ -93,6 +96,11 @@ export default class Template {
             positions.splice(available_positions[index], 1);
         }
         this.copyGrids();
+    }
+
+    defineBallPosition(x, y) {
+        this.ball.y = this.canvas_positions.y[y] + this.canvas_ball_diff.y;
+        this.ball.x = this.canvas_positions.x[x] + this.canvas_ball_diff.x;
     }
 
     copyGrids() {
@@ -117,6 +125,7 @@ export default class Template {
                 if (ptr === 0) {
                     this.main_player_position.y = i;
                     this.main_player_position.x = j;
+                    this.defineBallPosition(j, i);
                 }
                 let y = this.canvas_positions.y[i];
                 let x = this.canvas_positions.x[j];

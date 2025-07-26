@@ -11,12 +11,12 @@ export default class Move {
     static isValidMove(template, move) {
         let y = template.main_player_position.y;
         let x = template.main_player_position.x;
-        if (move.startsWith('player')) {
+        if (move.startsWith('player_move')) {
             y += Move.position_difference[move].y;
             x += Move.position_difference[move].x;
             return Move.isInsideFieldLimits(x, y) && Move.isEmptyField(template, x, y);
         }
-        else if (move.startsWith('goal')) {
+        else if (move.startsWith('goal_kick')) {
             return Move.playerIsAtGoalPosition(template, x, y);
         }
     }
@@ -34,12 +34,14 @@ export default class Move {
     }
 
     static makeMove(template, move) {
-        if (move.startsWith('player')) {
+        if (move.startsWith('player_move')) {
             template.player_list[0].x += Move.position_difference[move].x;
             template.player_list[0].y += Move.position_difference[move].y;
+            template.ball.x += Move.position_difference[move].x;
+            template.ball.y += Move.position_difference[move].y;
             return;
         }
-        if (move.startsWith('goal') && template.task_number <= 3) {
+        if (move.startsWith('goal_kick') && template.task_number <= 3) {
             return;
         }
     }
