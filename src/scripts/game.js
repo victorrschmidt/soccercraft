@@ -89,7 +89,7 @@ export class SinglePlayerGame {
         else {
             this.current_move_id++;
             if (this.current_move_id === this.moveset.length) {
-                console.log('DERROTA SEM MOVIMENTOS INVÁLIDOS');
+                this.endGame('no_goal');
                 return;
             }
             const move = this.moveset[this.current_move_id];
@@ -100,14 +100,13 @@ export class SinglePlayerGame {
                 this.tryGoal(move);
             }
             if (this.had_invalid_move) {
-                console.log('DERROTA POR MOVIMENTO INVÁLIDO');
-                this.resetTemplate();
+                this.endGame('invalid_move');
                 return;
             }
         }
         this.drawEntities();
         if (this.has_scored) {
-            console.log('VITÓRIA');
+            this.endGame('goal');
             return;
         }
         requestAnimationFrame(this.run);
@@ -121,6 +120,23 @@ export class SinglePlayerGame {
         this.template.generateNewTemplate();
         this.loadImages();
         Interface.deleteAllMoves();
+    }
+
+    endGame(reason) {
+        switch (reason) {
+            case 'goal':
+                alert('GOOOL!!! Você venceu!');
+                this.generateTemplate();
+                break;
+            case 'invalid_move':
+                alert('Você perdeu. Seu jogador fez um movimento inválido.');
+                this.resetTemplate();
+                break;
+            case 'no_goal':
+                alert('Você perdeu. Seu jogador não marcou o gol.');
+                this.resetTemplate();
+                break;
+        }
     }
 
     resetTemplate = () => {
@@ -140,13 +156,12 @@ export class SinglePlayerGame {
         this.had_invalid_move = false;
         this.has_scored = false;
         this.setTargetPosition();
-        console.log('INÍCIO');
         if (this.had_invalid_move) {
-            console.log('FIM POR MOVIMENTO INVALIDO');
-            this.resetTemplate();
+            this.endGame('invalid_move');
             return;
         }
         this.is_making_move = true;
         this.run();
+
     }
 }

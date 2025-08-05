@@ -159,7 +159,13 @@ main {
   background-color: var(--light-green);
   display: flex;
   flex-direction: column;
+}
+.main-content-game-controls-1 {
   width: 580px;
+  height: 440px;
+}
+.main-content-game-controls-2 {
+  width: 720px;
   height: 440px;
 }
 #main-content-game-controls-display {
