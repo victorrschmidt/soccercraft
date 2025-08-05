@@ -14,6 +14,7 @@ export class SinglePlayerGame {
         this.template = new Template(task_number);
         this.template.ball.image.onload = this.checkLoadedImages;
         this.had_invalid_move = undefined;
+        this.goalkeeper_defended = undefined;
         this.has_scored = undefined;
         this.is_making_move = undefined;
         this.moveset = undefined;
@@ -102,6 +103,9 @@ export class SinglePlayerGame {
         if (Move.isValidMove(this.template, move)) {
             this.has_scored = true;
         }
+        else {
+            this.goalkeeper_defended = true;
+        }
     }
 
     run = () => {
@@ -121,6 +125,10 @@ export class SinglePlayerGame {
             }
             else {
                 this.tryGoal(move);
+                if (this.goalkeeper_defended) {
+                    this.endGame('goalkeeper_defended');
+                    return;
+                }
             }
             if (this.had_invalid_move) {
                 this.endGame('invalid_move');
@@ -159,6 +167,10 @@ export class SinglePlayerGame {
                 alert('Você perdeu. Seu jogador não marcou o gol.');
                 this.resetTemplate();
                 break;
+            case 'goalkeeper_defended':
+                alert('Você perdeu. O goleiro defendeu a finzalização.');
+                this.resetTemplate();
+                break;
         }
     }
 
@@ -178,6 +190,7 @@ export class SinglePlayerGame {
         this.current_move_id = 0;
         this.had_invalid_move = false;
         this.has_scored = false;
+        this.goalkeeper_defended = false;
         this.setTargetPosition();
         if (this.had_invalid_move) {
             this.endGame('invalid_move');

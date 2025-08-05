@@ -21,7 +21,11 @@ export default class Move {
             return Move.isInsideFieldLimits(x, y) && Move.isEmptyField(template, x, y);
         }
         else if (move.startsWith('goal_kick')) {
-            return Move.playerIsAtGoalPosition(template, x, y);
+            const is_in_position = Move.playerIsAtGoalPosition(template, x, y);
+            if (template.task_number < 4) return is_in_position;
+            const kick_side = ['left', 'up', 'right'].indexOf(move.split('_')[2]);
+            return kick_side !== template.goalkeeper_side;
+
         }
         else {
             let y = template.main_player_position.y;

@@ -20,6 +20,7 @@ export default class Template {
         this.canvas_positions = {x: [42, 122, 206, 288, 370], y: [36, 103, 172, 240, 310, 378, 447, 515]};
         this.canvas_ball_diff = {x: 36, y: 48};
         this.ball = new Entity(`${Configs.assets.path}/${Configs.assets.ball_file_name}`, 0, 0, Configs.assets.ball_default_size.width, Configs.assets.ball_default_size.height);
+        this.goalkeeper_canvas_positions = {x: [180, 206, 232], y: 5};
     }
 
     generateNewTemplate() {
@@ -99,6 +100,17 @@ export default class Template {
                 positions.splice(available_positions[index], 1);
             }
         }
+        this.goalkeeper_side = this.task.has_goalkeeper ? Utilities.randint(0, 2) : undefined;
+        if (this.task.has_goalkeeper) {
+            let team = this.enemy_team;
+            let src = `${Configs.assets.path}/player_${team}_${this.team_info[team].asset_ptr + 1}.png`;
+            let width = Configs.assets.game_player_default_size.width;
+            let height = Configs.assets.game_player_default_size.height;
+            let x = this.goalkeeper_canvas_positions.x[this.goalkeeper_side];
+            let y = this.goalkeeper_canvas_positions.y;
+            this.team_info[team].asset_ptr++;
+            this.player_list.push(new Player(src, x, y, width, height, team));
+        }
         this.copyGrids();
     }
 
@@ -144,6 +156,13 @@ export default class Template {
                 }
                 this.player_list[ptr] = new Player(src, x, y, width, height, team);
             }
+        }
+        if (swap_teams && this.task.has_goalkeeper) {
+            let goalkeeper = this.player_list[this.player_list.length - 1];
+            let team = this.team_info[goalkeeper.team].opposite_team;
+            let src = `${Configs.assets.path}/player_${team}_${this.team_info[team].asset_ptr + 1}.png`;
+            this.team_info[team].asset_ptr++;
+            this.player_list[this.player_list.length - 1] = new Player(src, goalkeeper.x, goalkeeper.y, goalkeeper.width, goalkeeper.height, team);
         }
     }
 
