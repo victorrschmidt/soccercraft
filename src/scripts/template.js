@@ -80,20 +80,24 @@ export default class Template {
         positions.splice(main_player_index, 1);
         const dy = this.task_number === 1 ? [0, -1, 0] : [0, -1, 0, 1];
         const dx = this.task_number === 1 ? [-1, 0, 1] : [-1, 0, 1, 0];
-        for (let i = 0, ptr = 1; i < this.task.enemy_count; i++, ptr++) {
-            let available_positions = Array(positions.length).fill().map((x, i) => i);
-            let index = Utilities.randint(0, available_positions.length - 1);
-            let y = positions[available_positions[index]][0];
-            let x = positions[available_positions[index]][1];
-            while (!canAddEnemy(x, y)) {
-                available_positions.splice(index, 1);
-                index = Utilities.randint(0, available_positions.length - 1);
-                y = positions[available_positions[index]][0];
-                x = positions[available_positions[index]][1];
+        const player_count = [this.task.enemy_count, this.task.friend_count];
+        let ptr = 1;
+        for (let k = 0; k < 2; k++) {
+            for (let i = 0; i < player_count[k]; i++, ptr++) {
+                let available_positions = Array(positions.length).fill().map((x, i) => i);
+                let index = Utilities.randint(0, available_positions.length - 1);
+                let y = positions[available_positions[index]][0];
+                let x = positions[available_positions[index]][1];
+                while (!canAddEnemy(x, y)) {
+                    available_positions.splice(index, 1);
+                    index = Utilities.randint(0, available_positions.length - 1);
+                    y = positions[available_positions[index]][0];
+                    x = positions[available_positions[index]][1];
+                }
+                this.player_ptr_grid_copy[y][x] = ptr;
+                addToPlayerList(x, y, k === 0 ? this.enemy_team : this.friend_team);
+                positions.splice(available_positions[index], 1);
             }
-            this.player_ptr_grid_copy[y][x] = ptr;
-            addToPlayerList(x, y, this.enemy_team);
-            positions.splice(available_positions[index], 1);
         }
         this.copyGrids();
     }

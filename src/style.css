@@ -168,6 +168,10 @@ main {
   width: 720px;
   height: 440px;
 }
+.main-content-game-controls-3 {
+  width: 720px;
+  height: 640px;
+}
 #main-content-game-controls-display {
   background-color: var(--dark-green);
   display: grid;

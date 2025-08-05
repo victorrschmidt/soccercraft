@@ -59,16 +59,38 @@ export class SinglePlayerGame {
         let x = this.template.main_player_position.x;
         let ny = y + Move.position_difference[move].y;
         let nx = x + Move.position_difference[move].x;
-        this.target_position.y = this.template.canvas_positions.y[ny];
-        this.target_position.x = this.template.canvas_positions.x[nx];
+        if (move.startsWith('player_move')) {
+            this.target_position.y = this.template.canvas_positions.y[ny];
+            this.target_position.x = this.template.canvas_positions.x[nx];
+            this.template.player_ptr_grid[y][x] = -1;
+            this.template.player_ptr_grid[ny][nx] = 0;
+        }
+        else {
+            if (move === 'ball_pass_up') {
+                while (this.template.player_ptr_grid[ny][x] === -1) ny--;
+            }
+            else if (move === 'ball_pass_right') {
+                while (this.template.player_ptr_grid[y][nx] === -1) nx++;
+            }
+            else if (move === 'ball_pass_down') {
+                while (this.template.player_ptr_grid[ny][x] === -1) ny++;
+            }
+            else {
+                while (this.template.player_ptr_grid[y][nx] === -1) nx--;
+            }
+            let ptr = this.template.player_ptr_grid[ny][nx];
+            [this.template.player_list[0], this.template.player_list[ptr]] = [this.template.player_list[ptr], this.template.player_list[0]];
+            [this.template.player_ptr_grid[y][x], this.template.player_ptr_grid[ny][nx]] = [this.template.player_ptr_grid[ny][nx], this.template.player_ptr_grid[y][x]];
+            this.target_position.y = this.template.canvas_positions.y[ny] + this.template.canvas_ball_diff.y;
+            this.target_position.x = this.template.canvas_positions.x[nx] + this.template.canvas_ball_diff.x;
+        }
         this.template.main_player_position.y = ny;
         this.template.main_player_position.x = nx;
-        this.template.player_ptr_grid[y][x] = -1;
-        this.template.player_ptr_grid[ny][nx] = 0;
     }
 
-    finishedMove() {
-        return this.template.player_list[0].x === this.target_position.x && this.template.player_list[0].y === this.target_position.y;
+    finishedMove(move) {
+        if (move.startsWith('player_move')) return this.template.player_list[0].x === this.target_position.x && this.template.player_list[0].y === this.target_position.y;
+        return this.template.ball.x === this.target_position.x && this.template.ball.y === this.target_position.y;
     }
 
     makeMove() {
@@ -83,7 +105,7 @@ export class SinglePlayerGame {
     }
 
     run = () => {
-        if (this.is_making_move && !this.finishedMove()) {
+        if (this.is_making_move && !this.finishedMove(this.moveset[this.current_move_id])) {
             this.makeMove();
         }
         else {
@@ -94,6 +116,7 @@ export class SinglePlayerGame {
             }
             const move = this.moveset[this.current_move_id];
             if (!move.startsWith('goal_kick')) {
+                console.log('end pass');
                 this.setTargetPosition();
             }
             else {
@@ -162,6 +185,5 @@ export class SinglePlayerGame {
         }
         this.is_making_move = true;
         this.run();
-
     }
 }
