@@ -104,7 +104,12 @@ export class SinglePlayerGame {
             this.has_scored = true;
         }
         else {
-            this.goalkeeper_defended = true;
+            if (!Move.playerIsAtGoalPosition(this.template, this.template.main_player_position.x, this.template.main_player_position.y)) {
+                this.had_invalid_move = true;
+            }
+            else {
+                this.goalkeeper_defended = true;
+            }
         }
     }
 
@@ -127,6 +132,10 @@ export class SinglePlayerGame {
                 this.tryGoal(move);
                 if (this.goalkeeper_defended) {
                     this.endGame('goalkeeper_defended');
+                    return;
+                }
+                else {
+                    this.endGame('invalid_move');
                     return;
                 }
             }

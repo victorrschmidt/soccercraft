@@ -23,31 +23,127 @@
     <div class="main-content">
       <div id="main-content-tutorial">
         <section>
-          <h2>Sobre</h2>
+          <h2>Modo de 1 jogador</h2>
           <p>
-            Esta é uma versão digital do jogo <a href="https://drive.google.com/file/d/1W4HNc3GPjVGZqRpZtkf9L40zG1vSh48a/view" target="_blank">Soccercraft</a>, parte do projeto <a href="https://wp.ufpel.edu.br/pensamentocomputacional/planos/" target="_blank">Explorando o Pensamento Computacional desde o Ensino Fundamental (Exp-PC)</a>, da Universidade Federal de Pelotas (UFPel). O jogo está dividido em tarefas, onde cada uma funciona de acordo com sua especificação no plano de ensino.
+            O objetivo é fazer gol no campo do adversário (metade de cima do campo). Você deve clicar nos comandos para que o jogador que está sendo controlado (jogador com a bola) chegue até a pequena área e chute ao gol.
           </p>
         </section>
         <section>
-          <h2>Modo de um jogador (Tarefas 1 - 4)</h2>
+          <h2>Modo de 2 jogadores</h2>
           <p>
-            O jogo é composto por um painel de controle, onde o aluno precisa clicar nos botões para gerar a sequência de comandos que será executada pelo jogador que está sendo controlado. Ao terminar de digitar os comandos, o aluno deve clicar no botão de "play" para iniciar a execução do jogo.
-          </p>
-        </section>
-        <section>
-          <h2>Modo de dois jogadores (Tarefa 5)</h2>
-          <p>
-            Inicialmente, cada um dos alunos seleciona onde irá colocar seus jogadores (a configuração de posicionamento deve ser válida, ou seja, ter o sinal de correto ao lado). O jogo é composto por dois painéis e é jogado em turnos. Em seu turno, o aluno seleciona o comando que será executado. O aluno que marcar o gol primeiro é o vencedor.
+            O objetivo do time azul é fazer o gol no campo de cima, e o objetivo do time vermelho é fazer o gol no campo de baixo. Inicialmente, os jogadores selecionam a posição onde seus jogadores ficarão. Cada time possui um jogador com uma bola, que será o jogador a ser controlado inicialmente por cada time. Cada jogador faz um movimento por turno. Quando um jogador de um dos times chega ao gol para chutar, começa um minijogo, onde o jogador escolhe um lado para chutar, e o jogador que está tentando se defender do gol escolhe um lado para que seu goleiro pule. Se o gol for feito, o jogo termina e o jogador que fez o gol ganha.
           </p>
         </section>
         <section>
           <h2>Comandos</h2>
+          <div class="img-with-desc">
+            <img class="no-selection" src="../assets/player_move_up.png" alt="mover-para-cima">
+            <p>
+              <b>Mover para cima:</b>
+              O jogador que está com a bola se move para o quadrado de cima do quadrado que ele está. Se houver um jogador no quadrado de cima ou não existir um quadrado acima, o jogo acaba por haver um movimento inválido.
+            </p>
+          </div>
+          <div class="img-with-desc">
+            <img class="no-selection" src="../assets/player_move_right.png" alt="mover-para-direita">
+            <p>
+              <b>Mover para a direita:</b>
+              O jogador que está com a bola se move para o quadrado à direita do quadrado que ele está. Se houver um jogador no quadrado da direita ou não existir um quadrado na direita, o jogo acaba por haver um movimento inválido.
+            </p>
+          </div>
+          <div class="img-with-desc">
+            <img class="no-selection" src="../assets/player_move_down.png" alt="mover-para-baixo">
+            <p>
+              <b>Mover para baixo:</b>
+              O jogador que está com a bola se move para o quadrado de baixo do quadrado que ele está. Se houver um jogador no quadrado de baixo ou não existir um quadrado abaixo, o jogo acaba por haver um movimento inválido.
+            </p>
+          </div>
+          <div class="img-with-desc">
+            <img class="no-selection" src="../assets/player_move_left.png" alt="mover-para-esquerda">
+            <p>
+              <b>Mover para a esquerda:</b>
+              O jogador que está com a bola se move para o quadrado à esquerda do quadrado que ele está. Se houver um jogador no quadrado da esquerda ou não existir um quadrado na esquerda, o jogo acaba por haver um movimento inválido.
+            </p>
+          </div>
+          <div class="img-with-desc">
+            <img class="no-selection" src="../assets/goal_kick_up.png" alt="chutar-gol">
+            <p>
+              <b>Chutar no meio do gol:</b>
+              O jogador que está com a bola chuta no meio do gol. O jogador precisa estar na pequena área adversária para executar esse comando. No modo de 1 jogador, se não houver um goleiro adversário ou o goleiro estiver em outra posição, o gol é feito. Caso contrário, o jogo termina por movimento inválido (não estar na pequena área) ou por defesa do goleiro.
+            </p>
+          </div>
+          <div class="img-with-desc">
+            <img class="no-selection" src="../assets/goal_kick_right.png" alt="chutar-gol-direita">
+            <p>
+              <b>Chutar no canto direito do gol:</b>
+              O jogador que está com a bola chuta no canto direito do gol. O jogador precisa estar na pequena área adversária para executar esse comando. No modo de 1 jogador, se não houver um goleiro adversário ou o goleiro estiver em outra posição, o gol é feito. Caso contrário, o jogo termina por movimento inválido (não estar na pequena área) ou por defesa do goleiro.
+            </p>
+          </div>
+          <div class="img-with-desc">
+            <img class="no-selection" src="../assets/goal_kick_left.png" alt="chutar-gol-esquerda">
+            <p>
+              <b>Chutar no canto esquerdo do gol:</b>
+              O jogador que está com a bola chuta no canto esquerdo do gol. O jogador precisa estar na pequena área adversária para executar esse comando. No modo de 1 jogador, se não houver um goleiro adversário ou o goleiro estiver em outra posição, o gol é feito. Caso contrário, o jogo termina por movimento inválido (não estar na pequena área) ou por defesa do goleiro.
+            </p>
+          </div>
+          <div class="img-with-desc">
+            <img class="no-selection" src="../assets/ball_pass_up.png" alt="passar-bola-cima">
+            <p>
+              <b>Passar a bola para cima:</b>
+              O jogador que está com a bola passa ela para um jogador aliado que esteja em uma posição acima dele. É preciso que o espaço entre os dois jogadores esteja vazio, para que a bola não seja interceptada. O jogador que recebeu a bola passa a ser o jogador a ser controlado.
+            </p>
+          </div>
+          <div class="img-with-desc">
+            <img class="no-selection" src="../assets/ball_pass_right.png" alt="passar-bola-direita">
+            <p>
+              <b>Passar a bola para a direita:</b>
+              O jogador que está com a bola passa ela para um jogador aliado que esteja em uma posição à direita dele. É preciso que o espaço entre os dois jogadores esteja vazio, para que a bola não seja interceptada. O jogador que recebeu a bola passa a ser o jogador a ser controlado.
+            </p>
+          </div>
+          <div class="img-with-desc">
+            <img class="no-selection" src="../assets/ball_pass_down.png" alt="passar-bola-baixo">
+            <p>
+              <b>Passar a bola para baixo:</b>
+              O jogador que está com a bola passa ela para um jogador aliado que esteja em uma posição abaixo dele. É preciso que o espaço entre os dois jogadores esteja vazio, para que a bola não seja interceptada. O jogador que recebeu a bola passa a ser o jogador a ser controlado.
+            </p>
+          </div>
+          <div class="img-with-desc">
+            <img class="no-selection" src="../assets/ball_pass_left.png" alt="passar-bola-esquerda">
+            <p>
+              <b>Passar a bola para a esquerda:</b>
+              O jogador que está com a bola passa ela para um jogador aliado que esteja em uma posição à esquerda dele. É preciso que o espaço entre os dois jogadores esteja vazio, para que a bola não seja interceptada. O jogador que recebeu a bola passa a ser o jogador a ser controlado.
+            </p>
+          </div>
+          <div class="img-with-desc">
+            <img class="no-selection" src="../assets/reset_icon.png" alt="reiniciar-configuracao">
+            <p>
+              <b>Recriar fase:</b>
+              No modo para 1 jogador, este botão recria a fase, com um modelo diferente. No modo para 2 jogadores, este botão reinicia o jogo para o modo de posicionamento dos jogadores.
+            </p>
+          </div>
+          <div class="img-with-desc">
+            <img class="no-selection" src="../assets/swap_team.png" alt="trocar-time">
+            <p>
+              <b>Trocar de time:</b>
+              Este botão só existe no modo para 1 jogador. Esse botão faz com que o time do jogador mude, mantendo a configuração da fase.
+            </p>
+          </div>
+          <div class="img-with-desc">
+            <img class="no-selection" src="../assets/backspace_icon.png" alt="apagar-movimento">
+            <p>
+              <b>Apagar último movimento:</b>
+              Este botão faz com que o último movimento colocado no painel seja apagado.
+            </p>
+          </div>
+          <div class="img-with-desc">
+            <img class="no-selection" src="../assets/play_icon.png" alt="apagar-movimento">
+            <p>
+              <b>Iniciar movimento(s):</b>
+              No modo para 1 jogador, este botão faz com que a lista de movimentos seja executada. No modo para 2 jogadores, este botão faz com que o movimento digitado pelo jogador que está em seu turno seja executado.
+            </p>
+          </div>
         </section>
       </div>
     </div>
   </main>
-  <footer>
-    Footer
-  </footer>
 </body>
 </html>

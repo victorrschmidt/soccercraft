@@ -246,11 +246,13 @@ main {
 #main-content-tutorial > section > p > a {
   color: var(--link-blue);
 }
-
-/* Footer */
-footer {
-  background-color: var(--light-green);
+.img-with-desc {
   display: flex;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
+  gap: 16px;
+}
+.img-with-desc > img {
+  width: 140px;
+  height: 140px;
 }
