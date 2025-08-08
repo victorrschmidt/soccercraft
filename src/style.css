@@ -94,37 +94,47 @@ main {
   margin: 64px 0;
 }
 #main-content-home {
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 720px;
 }
-#main-content-home-title {
+.main-content-home-tasks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+.main-content-home-tasks > h2 {
   color: var(--dark-green);
   font-size: 2.0em;
 }
-#main-content-home-tasks {
+.main-content-home-tasks > div {
   background-color: var(--light-green);
   outline: solid var(--default-green) 4px;
   display: flex;
-  justify-content: space-evenly;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  width: 1100px;
-  height: 200px;
+  gap: 32px;
+  width: 240px;
   padding: 16px;
   border-radius: 4px;
 }
-#main-content-home-tasks > * {
+.main-content-home-tasks > div > * {
   background-color: var(--default-green);
   color: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 16.0%;
-  height: 80.0%;
+  width: 100.0%;
+  height: 60px;
   border-radius: 4px;
-  font-size: 2.2em;
+  font-size: 2.0em;
   transition: 0.3s;
 }
-#main-content-home-tasks > *:hover {
-  font-size: 1.7em;
+.main-content-home-tasks > div > *:hover {
+  font-size: 1.6em;
 }
 #main-content-game {
   flex-direction: row;
