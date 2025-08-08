@@ -33,7 +33,8 @@ export default class Configs {
             1: {half_field: true, enemy_count: 5, friend_count: 0, has_goalkeeper: false},
             2: {half_field: false, enemy_count: 8, friend_count: 0, has_goalkeeper: false},
             3: {half_field: false, enemy_count: 6, friend_count: 3, has_goalkeeper: false},
-            4: {half_field: false, enemy_count: 6, friend_count: 3, has_goalkeeper: true}
+            4: {half_field: false, enemy_count: 6, friend_count: 3, has_goalkeeper: true},
+            5: {half_field: false, enemy_count: 6, friend_count: 3, has_goalkeeper: true}
         }
     };
 }

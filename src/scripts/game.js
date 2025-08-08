@@ -102,6 +102,7 @@ export class SinglePlayerGame {
     tryGoal(move) {
         if (Move.isValidMove(this.template, move)) {
             this.has_scored = true;
+            console.log('here');
         }
         else {
             if (!Move.playerIsAtGoalPosition(this.template, this.template.main_player_position.x, this.template.main_player_position.y)) {
@@ -134,8 +135,12 @@ export class SinglePlayerGame {
                     this.endGame('goalkeeper_defended');
                     return;
                 }
-                else {
+                else if (this.had_invalid_move) {
                     this.endGame('invalid_move');
+                    return;
+                }
+                else {
+                    this.endGame('goal');
                     return;
                 }
             }
