@@ -6,6 +6,7 @@ import { Entity } from './entities.js';
 
 export class SinglePlayerGame {
     constructor(task_number) {
+        this.interface = new Interface();
         this.task_number = task_number;
         this.canvas = document.getElementById(Configs.html.game_canvas);
         this.ctx = this.canvas.getContext('2d');
@@ -158,13 +159,13 @@ export class SinglePlayerGame {
     }
 
     getMoveset() {
-        this.moveset = Interface.getMoveList();
+        this.moveset = this.interface.getMoveList();
     }
 
     generateTemplate = () => {
         this.template.generateNewTemplate();
         this.loadImages();
-        Interface.deleteAllMoves();
+        this.interface.deleteAllMoves();
     }
 
     endGame(reason) {
@@ -189,7 +190,7 @@ export class SinglePlayerGame {
     }
 
     resetTemplate = () => {
-        Interface.deleteAllMoves();
+        this.interface.deleteAllMoves();
         this.template.resetCurrentTemplate();
         this.drawEntities();
     }
@@ -201,6 +202,7 @@ export class SinglePlayerGame {
 
     play = () => {
         this.getMoveset();
+        console.log(this.moveset);
         this.current_move_id = 0;
         this.had_invalid_move = false;
         this.has_scored = false;

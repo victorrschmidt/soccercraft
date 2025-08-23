@@ -152,7 +152,8 @@ main {
   transform: translateX(-2px);
 }
 .function-button,
-.move-button {
+.move-button,
+.repeat-button {
   cursor: pointer;
   border: 6px solid var(--default-green);
   transition: transform 0.2s ease;
