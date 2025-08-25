@@ -22,7 +22,7 @@ export default class Move {
         }
         else if (move.startsWith('goal_kick')) {
             const is_in_position = Move.playerIsAtGoalPosition(template, x, y);
-            if (template.task_number <= 5) return is_in_position;
+            if (!is_in_position) return false;
             const kick_side = ['left', 'up', 'right'].indexOf(move.split('_')[2]);
             return kick_side !== template.goalkeeper_side;
 

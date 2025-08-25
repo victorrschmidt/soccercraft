@@ -95,7 +95,7 @@ main {
 }
 #main-content-home {
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: flex-start;
   width: 720px;
 }

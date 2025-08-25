@@ -103,7 +103,6 @@ export class SinglePlayerGame {
     tryGoal(move) {
         if (Move.isValidMove(this.template, move)) {
             this.has_scored = true;
-            console.log('here');
         }
         else {
             if (!Move.playerIsAtGoalPosition(this.template, this.template.main_player_position.x, this.template.main_player_position.y)) {
@@ -127,7 +126,6 @@ export class SinglePlayerGame {
             }
             const move = this.moveset[this.current_move_id];
             if (!move.startsWith('goal_kick')) {
-                console.log('end pass');
                 this.setTargetPosition();
             }
             else {
@@ -202,7 +200,6 @@ export class SinglePlayerGame {
 
     play = () => {
         this.getMoveset();
-        console.log(this.moveset);
         this.current_move_id = 0;
         this.had_invalid_move = false;
         this.has_scored = false;
