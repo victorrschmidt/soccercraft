@@ -1,7 +1,7 @@
 import Configs from './configs.js';
 import Interface from './interface.js';
-import Template from './template.js';
 import Move from './move.js';
+import { SingleplayerTemplate } from './template.js';
 import { Entity } from './entities.js';
 
 export class SinglePlayerGame {
@@ -12,7 +12,7 @@ export class SinglePlayerGame {
         this.ctx = this.canvas.getContext('2d');
         this.background = new Entity(`${Configs.assets.path}/${Configs.assets.background_file_name}`, 0, 0, this.canvas.width, this.canvas.height);
         this.background.image.onload = this.checkLoadedImages;
-        this.template = new Template(task_number);
+        this.template = new SingleplayerTemplate(task_number);
         this.template.ball.image.onload = this.checkLoadedImages;
         this.had_invalid_move = undefined;
         this.goalkeeper_defended = undefined;

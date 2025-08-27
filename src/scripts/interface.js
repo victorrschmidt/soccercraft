@@ -12,9 +12,11 @@ export default class Interface {
         this.erase_button = document.getElementById(Configs.html.erase_button);
         this.move_buttons = document.getElementsByClassName(Configs.html.move_buttons);
         this.repeat_button = document.getElementById('repeat-move');
-        this.last_move = undefined;
         this.moveset = [];
-        this.last_repeat_number = undefined;
+        this.repeat_block = [];
+        this.is_creating_repeat_block = false;
+        this.last_repeat_block_size = undefined;
+        this.last_repeat_block_number = undefined;
     }
 
     /**
@@ -34,13 +36,6 @@ export default class Interface {
     }
 
     /**
-     * Retorna a quantidade de movimentos contidos no display.
-     */
-    getMoveAmount() {
-        return this.moveset_display.children.length;
-    }
-
-    /**
      * Retorna um array contendo strings relativas ao id de cada movimento do display.
      */
     getMoveList() {
@@ -48,74 +43,144 @@ export default class Interface {
     }
 
     /**
+     * Cria um elemento para o display de movimentos.
+     */
+    createMovement(id, type, src = undefined) {
+        const element = document.createElement(type);
+        element.className = `display-${id}`;
+        element.width = Configs.assets.display_icon_default_size;
+        element.height = Configs.assets.display_icon_default_size;
+        if (type === 'img') {
+            element.src = `${Configs.assets.path}/${src}.png`;
+        }
+        return element;
+    }
+
+    /**
      * Adiciona um movimento à lista de movimentos do display.
      */
     addMove(id) {
-        if (this.getMoveAmount() === Configs.html.display_max_commands) {
+        if (this.is_creating_repeat_block && this.repeat_block.length === 7) {
             return;
         }
-        const element = document.createElement('img');
-        element.className = `display-${id}`;
-        let name = id.split('-').join('_');
-        element.src = `${Configs.assets.path}/${name}.png`;
-        element.width = Configs.assets.display_icon_default_size;
-        element.height = Configs.assets.display_icon_default_size;
+        const name = id.split('-').join('_');
+        const element = this.createMovement(id, 'img', name);
         this.moveset_display.appendChild(element);
-        this.last_move = name;
-        this.moveset.push(name);
-        console.log(this.moveset);
+        if (this.is_creating_repeat_block) {
+            this.repeat_block.push(name);
+        }
+        else {
+            this.moveset.push(name);
+        }
     }
 
+    /**
+     * Lê o número de repetições a serem feitas para o bloco de repetição.
+     */
+    readNumber(min, max) {
+        do {
+            let num = Number(prompt(`Digite a quantidade de vezes que deseja repetir o bloco de comandos (mínimo ${min}, máximo ${max}):`));
+            if (isNaN(num)) {
+                continue;
+            }
+            if (num % 1 !== 0) {
+                alert('Digite um número inteiro!');
+                continue;
+            }
+            if (num < min || num > max) {
+                alert('Digite um número entre 1 e 10!');
+                continue;
+            }
+            return num;
+        } while (true);
+    }
+
+
+    /**
+     * Adiciona espaços vazios no display para inserir um bloco em uma nova linha.
+     */
+    fillDisplay() {
+        while (this.moveset_display.children.length % Configs.html.display_max_commands !== 0) {
+            const element = this.createMovement('empty-space', 'div');
+            this.moveset_display.appendChild(element);
+        }
+    }
+
+    /**
+     * Abre/fecha o bloco de repetição no display.
+     */
     addRepeat() {
-        if (this.last_move === undefined || this.last_move === 'repeat-move') {
+        if (this.is_creating_repeat_block && this.repeat_block.length === 0) {
             return;
         }
-        const element = document.createElement('img');
-        element.className = `display-repeat-move`;
-        element.src = `${Configs.assets.path}/repeat_move.png`;
-        element.width = Configs.assets.display_icon_default_size;
-        element.height = Configs.assets.display_icon_default_size;
-        this.moveset_display.appendChild(element);
-        const moves = parseInt(prompt('Digite o número de vezes que o último movimento será executado:')) - 1;
-        this.last_repeat_number = moves;
-        for (let i = 0; i < moves; i++) {
-            this.moveset.push(this.last_move);
+        const element = this.createMovement('repeat-move', 'img', 'repeat_move');
+        if (!this.is_creating_repeat_block) {
+            this.is_creating_repeat_block = true;
+            this.fillDisplay();
+            this.moveset_display.appendChild(element);
         }
-        this.last_move = 'repeat-move';
-        console.log(this.moveset);
+        else {
+            this.is_creating_repeat_block = false;
+            const repeat = this.readNumber(1, 10);
+            for (let i = 0; i < repeat; i++) {
+                for (const move of this.repeat_block) {
+                    this.moveset.push(move);
+                }
+            }
+            this.moveset_display.appendChild(element);
+            const repeat_display = document.createElement('div');
+            repeat_display.className = `display-repeat-number`;
+            repeat_display.innerHTML = repeat;
+            this.moveset_display.appendChild(repeat_display);
+            this.fillDisplay();
+            this.last_repeat_block_size = this.repeat_block.length;
+            this.last_repeat_block_number = repeat;
+            this.repeat_block = [];
+        }
     }
 
     /**
      * Remove o último movimento da lista de movimentos do display.
      */
     deleteLastMove() {
-        if (this.getMoveAmount() !== 0) {
-            if (this.last_move === 'repeat-move') {
-                for (let i = 0; i < this.last_repeat_number - 1; i++) {
-                    this.moveset.pop();
-                }
-            }
+        while (this.moveset_display.children.length !== 0 && this.moveset_display.lastChild.className === 'display-empty-space') {
             this.moveset_display.removeChild(this.moveset_display.lastChild);
         }
-        if (this.getMoveAmount() === 0) {
-            this.last_move = undefined;
+        if (this.moveset_display.children.length !== 0 && this.moveset_display.lastChild.className === 'display-repeat-number') {
+            for (let i = 0; i < this.last_repeat_block_size + 3; i++) {
+                this.moveset_display.removeChild(this.moveset_display.lastChild);
+            }
+            for (let i = 0; i < this.last_repeat_block_number * this.last_repeat_block_size; i++) {
+                this.moveset.pop();
+            }
+            while (this.moveset_display.children.length !== 0 && this.moveset_display.lastChild.className === 'display-empty-space') {
+                this.moveset_display.removeChild(this.moveset_display.lastChild);
+            }
         }
-        else {
-            this.last_move = this.moveset[this.moveset.length - 1];
+        else if (this.moveset_display.children.length !== 0 && this.moveset_display.lastChild.className === 'display-repeat-move') {
+            this.is_creating_repeat_block = false;
+            this.moveset_display.removeChild(this.moveset_display.lastChild);
         }
-        this.moveset.pop();
-        console.log(this.moveset);
+        else if (this.moveset_display.children.length !== 0) {
+            this.moveset_display.removeChild(this.moveset_display.lastChild);
+            if (this.is_creating_repeat_block) {
+                this.repeat_block.pop();
+            }
+            else {
+                this.moveset.pop();
+            }
+        }
     }
 
     /**
      * Remove todos os movimentos da lista de movimentos do display.
      */
     deleteAllMoves() {
-        while (this.getMoveAmount() !== 0) {
+        while (this.moveset_display.children.length !== 0) {
             this.moveset_display.removeChild(this.moveset_display.lastChild);
         }
-        this.last_move = undefined;
         this.moveset = [];
-        console.log(this.moveset);
+        this.repeat_block = [];
+        this.is_creating_repeat_block = false;
     }
 }

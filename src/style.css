@@ -194,12 +194,21 @@ main {
 #main-content-game-controls-display {
   background-color: var(--dark-green);
   display: grid;
-  place-items: center;
-  grid-template-rows: repeat(2, 1fr);
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(10, 1fr);
+  gap: 10px;
   width: 100.0%;
   height: 30.0%;
   padding: 4px;
+  overflow-y: auto;
+}
+.display-repeat-number {
+  background-color: var(--light-green);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
 }
 #main-content-game-controls-buttons {
   display: flex;
@@ -256,4 +265,33 @@ main {
 .img-with-desc > img {
   width: 140px;
   height: 140px;
+}
+
+/* Footer */
+footer {
+  background-color: var(--light-green);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100.0%;
+  max-width: 1440px;
+  padding: 32px;
+}
+#footer-content-about {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 420px;
+  font-size: 1.2em;
+}
+#footer-content-about > img {
+  width: 50px;
+  height: 50px;
 }
