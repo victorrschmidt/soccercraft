@@ -12,13 +12,15 @@ export default class Configs {
     };
     static html = {
         game_canvas: 'main-content-game-screen-canvas',
+        selection_canvas: 'selection-canvas',
         moveset_display: 'main-content-game-controls-display',
         play_button: 'play-button',
         restart_button: 'restart-button',
         team_button: 'team-button',
         erase_button: 'erase-button',
         move_buttons: 'move-button',
-        display_max_commands: 10
+        display_max_commands: 10,
+        display_max_block_commands: 7
     };
     static game = {
         field_rows: 8,

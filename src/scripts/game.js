@@ -1,13 +1,13 @@
 import Configs from './configs.js';
 import Interface from './interface.js';
 import Move from './move.js';
-import { SingleplayerTemplate } from './template.js';
+import { MultiplayerTemplate, SingleplayerTemplate } from './template.js';
 import { Entity } from './entities.js';
 
-export class SinglePlayerGame {
+export class SingleplayerGame {
     constructor(task_number) {
-        this.interface = new Interface();
         this.task_number = task_number;
+        this.interface = new Interface();
         this.canvas = document.getElementById(Configs.html.game_canvas);
         this.ctx = this.canvas.getContext('2d');
         this.background = new Entity(`${Configs.assets.path}/${Configs.assets.background_file_name}`, 0, 0, this.canvas.width, this.canvas.height);
@@ -211,5 +211,76 @@ export class SinglePlayerGame {
         }
         this.is_making_move = true;
         this.run();
+    }
+}
+
+export class MultiplayerGame {
+    constructor() {
+        this.canvas = document.getElementById(Configs.html.game_canvas);
+        this.ctx = this.canvas.getContext('2d');
+        this.background = new Entity(`${Configs.assets.path}/${Configs.assets.background_file_name}`, 0, 0, this.canvas.width, this.canvas.height);
+        this.background.image.onload = this.checkLoadedImages;
+        this.selection_canvas = document.getElementById(Configs.html.selection_canvas);
+        this.restart_button = document.getElementById(Configs.html.restart_button);
+        this.used_cells = new Set();
+        this.template = new MultiplayerTemplate();
+        this.player_count = 0;
+        this.teams = ['blue', 'red'];
+        this.team_ptr = 0;
+    }
+
+    createSelectionCell(x, y) {
+        const element = document.createElement('div');
+        element.id = `${x}${y}`;
+        element.className = 'selection-canvas-cell image-div';
+        element.addEventListener('click', () => { this.addPlayerToCell(element.id) });
+        return element;
+    }
+
+    addSelectionCells() {
+        for (let i = 0; i < Configs.game.field_rows; i++) {
+            for (let j = 0; j < Configs.game.field_cols; j++) {
+                const element = this.createSelectionCell(i, j);
+                this.selection_canvas.appendChild(element);
+            }
+        }
+    }
+
+    addPlayerToCell(id) {
+        if (this.used_cells.has(id)) {
+            return;
+        }
+        const x = Number(id[0]);
+        const y = Number(id[1]);
+        const cell = document.getElementById(id);
+        const current_team = this.teams[this.team_ptr];
+        cell.style.backgroundImage = `url('../assets/player_${current_team}_${this.template.team_info[current_team].asset_ptr + 1}.png')`;
+        this.template.addToPlayerList(y, x, current_team);
+        this.template.player_ptr_grid[x][y] = this.player_count++;
+        this.team_ptr ^= 1;
+        this.used_cells.add(id);
+        if (this.used_cells.size === 14) {
+            this.loadCanvas();
+        }
+    }
+
+    addEventListeners() {
+        this.used_cells.add('02');
+        this.used_cells.add('72');
+        this.addSelectionCells();
+        this.restart_button.addEventListener('click', () => { window.location.reload(); });
+    }
+
+    loadCanvas() {
+        this.selection_canvas.style.display = 'none';
+        this.drawEntities();
+    }
+
+    drawEntities() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.background.draw(this.ctx);
+        for (const player of this.template.player_list) {
+            player.draw(this.ctx);
+        }
     }
 }

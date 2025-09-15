@@ -95,9 +95,9 @@ main {
 }
 #main-content-home {
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   align-items: flex-start;
-  width: 720px;
+  width: 740px;
 }
 .main-content-home-tasks {
   display: flex;
@@ -227,6 +227,26 @@ main {
 }
 #main-content-game-controls-buttons > * > *:hover {
   transform: translateY(-2px);
+}
+.image-div {
+  background-position: center;
+  background-repeat: no-repeat;
+}
+#selection-canvas {
+  background-image: url('assets/background.png');
+  background-size: cover;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  width: 445px;
+  height: 615px;
+  padding: 32px 18px;
+}
+.selection-canvas-cell {
+  background-size: 40px;
+  width: 80px;
+  height: 68px;
+  cursor: pointer;
 }
 #main-content-tutorial {
   background-color: var(--light-green);

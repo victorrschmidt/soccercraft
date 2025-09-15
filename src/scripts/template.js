@@ -185,3 +185,10 @@ export class SingleplayerTemplate extends Template {
         this.reconfigurePlayerList(true);
     }
 }
+
+export class MultiplayerTemplate extends Template {
+    constructor() {
+        super();
+        this.player_ptr_grid = Array.from({length: this.rows}, () => Array(this.cols).fill(-1));
+    }
+}

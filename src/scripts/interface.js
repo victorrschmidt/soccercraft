@@ -36,6 +36,27 @@ export default class Interface {
     }
 
     /**
+     * Adiciona um elemento à tela de display.
+     */
+    addToDisplay(element) {
+        this.moveset_display.appendChild(element);
+    }
+
+    /**
+     * Remove o último elemento do display.
+     */
+    removeLastFromDisplay() {
+        this.moveset_display.removeChild(this.moveset_display.lastChild);
+    }
+
+    /**
+     * Verifica a classe do último elemento do display.
+     */
+    lastDisplayElementClass(classname) {
+        return this.moveset_display.children.length !== 0 && this.moveset_display.lastChild.className === classname;
+    }
+
+    /**
      * Retorna um array contendo strings relativas ao id de cada movimento do display.
      */
     getMoveList() {
@@ -60,12 +81,12 @@ export default class Interface {
      * Adiciona um movimento à lista de movimentos do display.
      */
     addMove(id) {
-        if (this.is_creating_repeat_block && this.repeat_block.length === 7) {
+        if (this.is_creating_repeat_block && this.repeat_block.length === Configs.html.display_max_block_commands) {
             return;
         }
         const name = id.split('-').join('_');
         const element = this.createMovement(id, 'img', name);
-        this.moveset_display.appendChild(element);
+        this.addToDisplay(element);
         if (this.is_creating_repeat_block) {
             this.repeat_block.push(name);
         }
@@ -81,6 +102,7 @@ export default class Interface {
         do {
             let num = Number(prompt(`Digite a quantidade de vezes que deseja repetir o bloco de comandos (mínimo ${min}, máximo ${max}):`));
             if (isNaN(num)) {
+                alert('Digite um número!');
                 continue;
             }
             if (num % 1 !== 0) {
@@ -95,14 +117,13 @@ export default class Interface {
         } while (true);
     }
 
-
     /**
      * Adiciona espaços vazios no display para inserir um bloco em uma nova linha.
      */
     fillDisplay() {
         while (this.moveset_display.children.length % Configs.html.display_max_commands !== 0) {
             const element = this.createMovement('empty-space', 'div');
-            this.moveset_display.appendChild(element);
+            this.addToDisplay(element);
         }
     }
 
@@ -117,52 +138,53 @@ export default class Interface {
         if (!this.is_creating_repeat_block) {
             this.is_creating_repeat_block = true;
             this.fillDisplay();
-            this.moveset_display.appendChild(element);
+            this.addToDisplay(element);
+            return;
         }
-        else {
-            this.is_creating_repeat_block = false;
-            const repeat = this.readNumber(1, 10);
-            for (let i = 0; i < repeat; i++) {
-                for (const move of this.repeat_block) {
-                    this.moveset.push(move);
-                }
+        const repeat = this.readNumber(1, 10);
+        for (let i = 0; i < repeat; i++) {
+            for (const move of this.repeat_block) {
+                this.moveset.push(move);
             }
-            this.moveset_display.appendChild(element);
-            const repeat_display = document.createElement('div');
-            repeat_display.className = `display-repeat-number`;
-            repeat_display.innerHTML = repeat;
-            this.moveset_display.appendChild(repeat_display);
-            this.fillDisplay();
-            this.last_repeat_block_size = this.repeat_block.length;
-            this.last_repeat_block_number = repeat;
-            this.repeat_block = [];
         }
+        const repeat_display = document.createElement('div');
+        repeat_display.className = `display-repeat-number`;
+        repeat_display.innerHTML = repeat;
+        this.addToDisplay(element);
+        this.addToDisplay(repeat_display);
+        this.fillDisplay();
+        this.is_creating_repeat_block = false;
+        this.last_repeat_block_size = this.repeat_block.length;
+        this.last_repeat_block_number = repeat;
+        this.repeat_block = [];
     }
 
     /**
      * Remove o último movimento da lista de movimentos do display.
      */
     deleteLastMove() {
-        while (this.moveset_display.children.length !== 0 && this.moveset_display.lastChild.className === 'display-empty-space') {
-            this.moveset_display.removeChild(this.moveset_display.lastChild);
+        while (this.lastDisplayElementClass('display-empty-space')) {
+            this.removeLastFromDisplay();
         }
-        if (this.moveset_display.children.length !== 0 && this.moveset_display.lastChild.className === 'display-repeat-number') {
+        if (this.lastDisplayElementClass('display-repeat-number')) {
             for (let i = 0; i < this.last_repeat_block_size + 3; i++) {
-                this.moveset_display.removeChild(this.moveset_display.lastChild);
+                this.removeLastFromDisplay();
             }
             for (let i = 0; i < this.last_repeat_block_number * this.last_repeat_block_size; i++) {
                 this.moveset.pop();
             }
-            while (this.moveset_display.children.length !== 0 && this.moveset_display.lastChild.className === 'display-empty-space') {
-                this.moveset_display.removeChild(this.moveset_display.lastChild);
+            while (this.lastDisplayElementClass('display-empty-space')) {
+                this.removeLastFromDisplay();
             }
+            return;
         }
-        else if (this.moveset_display.children.length !== 0 && this.moveset_display.lastChild.className === 'display-repeat-move') {
+        if (this.lastDisplayElementClass('display-repeat-move')) {
             this.is_creating_repeat_block = false;
-            this.moveset_display.removeChild(this.moveset_display.lastChild);
+            this.removeLastFromDisplay();
+            return;
         }
-        else if (this.moveset_display.children.length !== 0) {
-            this.moveset_display.removeChild(this.moveset_display.lastChild);
+        if (this.moveset_display.children.length !== 0) {
+            this.removeLastFromDisplay();
             if (this.is_creating_repeat_block) {
                 this.repeat_block.pop();
             }
@@ -177,7 +199,7 @@ export default class Interface {
      */
     deleteAllMoves() {
         while (this.moveset_display.children.length !== 0) {
-            this.moveset_display.removeChild(this.moveset_display.lastChild);
+            this.removeLastFromDisplay();
         }
         this.moveset = [];
         this.repeat_block = [];

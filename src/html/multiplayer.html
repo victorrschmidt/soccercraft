@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="utf-8">
-  <title>Fase 1 - Soccercraft</title>
+  <title>Multiplayer - Soccercraft</title>
   <link rel="stylesheet" href="../style.css">
   <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
   <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
@@ -27,40 +27,11 @@
           <div id="restart-button" class="function-button">
             <img src="../assets/reset.png" class="small-button" alt="reiniciar">
           </div>
-          <div id="team-button" class="function-button">
-            <img src="../assets/swap_team.png" class="small-button" alt="trocar-time">
-          </div>
+        </div>
+        <div id="selection-canvas" class="image-div" width="445" height="615">
         </div>
         <canvas id="main-content-game-screen-canvas" width="445" height="615"></canvas>
       </div>
-      <div id="main-content-game-controls" class="main-content-game-controls-1">
-        <div id="main-content-game-controls-display"></div>
-        <div id="main-content-game-controls-buttons">
-          <div>
-            <div id="player-move-left" class="move-button">
-              <img src="../assets/player_move_left.png" class="small-button" alt="mover-esquerda">
-            </div>
-            <div id="player-move-right" class="move-button">
-              <img src="../assets/player_move_right.png" class="small-button" alt="mover-direita">
-            </div>
-            <div id="player-move-up" class="move-button">
-              <img src="../assets/player_move_up.png" class="small-button" alt="mover-cima">
-            </div>
-            <div id="goal-kick-up" class="move-button">
-              <img src="../assets/goal_kick_up.png" class="small-button" alt="chutar-gol">
-            </div>
-          </div>
-          <div>
-            <div id="play-button" class="function-button">
-              <img src="../assets/play.png" class="big-button" alt="iniciar-jogo">
-            </div>
-            <div id="erase-button" class="function-button">
-              <img src="../assets/backspace.png" class="big-button" alt="apagar-movimento">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </main>
   <footer>
     <div id="footer-content">
@@ -77,6 +48,6 @@
       </a>
     </div>
   </footer>
-  <script type="module" src="../scripts/script_singleplayer.js"></script>
+  <script type="module" src="../scripts/script_multiplayer.js"></script>
 </body>
 </html>
