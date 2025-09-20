@@ -153,6 +153,7 @@ main {
 }
 .function-button,
 .move-button,
+.move-button-copy,
 .repeat-button {
   cursor: pointer;
   border: 6px solid var(--default-green);
@@ -166,7 +167,8 @@ main {
   width: 175px;
   height: 125px;
 }
-#main-content-game-controls {
+#main-content-game-controls,
+#main-content-game-controls-copy {
   background-color: var(--light-green);
   display: flex;
   flex-direction: column;
@@ -191,15 +193,27 @@ main {
   width: 80px;
   height: 80px;
 }
-#main-content-game-controls-display {
+#main-content-game-controls-display,
+#main-content-game-controls-display-multiplayer {
   background-color: var(--dark-green);
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 10px;
   width: 100.0%;
   height: 30.0%;
   padding: 4px;
+}
+#main-content-game-controls-display {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 10px;
   overflow-y: auto;
+}
+#main-content-game-controls-display-multiplayer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#main-content-game-controls-display-multiplayer > img {
+  width: 120px;
+  height: 120px;
 }
 .display-repeat-number {
   background-color: var(--light-green);
@@ -247,6 +261,39 @@ main {
   width: 80px;
   height: 68px;
   cursor: pointer;
+}
+#main-content-game-select {
+  background-color: var(--light-green);
+  display: flex;
+  gap: 24px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#main-content-game-select-turn {
+  display: flex;
+  justify-content: flex-start;
+  width: 80.0%;
+  gap: 8px;
+}
+#main-content-game-select-turn-label {
+  font-size: 2.0em;
+}
+#main-content-game-select-turn-color {
+  color: #0047AB;
+  font-size: 2.0em;
+}
+.main-content-game-select-player {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 90.0%;
+  height: 32.0%;
+  gap: 16px;
+}
+.main-content-game-select-player > img {
+  width: 66px;
+  height: 130px;
 }
 #main-content-tutorial {
   background-color: var(--light-green);

@@ -5,7 +5,12 @@ import Configs from './configs.js';
  */
 export default class Interface {
     constructor() {
+        this.is_singleplayer = true;
         this.moveset_display = document.getElementById(Configs.html.moveset_display);
+        if (this.moveset_display === null) {
+            this.is_singleplayer = false;
+            this.moveset_display = document.getElementById('main-content-game-controls-display-multiplayer');
+        }
         this.play_button = document.getElementById(Configs.html.play_button);
         this.restart_button = document.getElementById(Configs.html.restart_button);
         this.team_button = document.getElementById(Configs.html.team_button);
@@ -24,8 +29,8 @@ export default class Interface {
      */
     addEventListeners(fplay, frestart, fteam) {
         this.play_button.addEventListener('click', () => { fplay(); });
-        this.restart_button.addEventListener('click', () => { frestart(); });
-        this.team_button.addEventListener('click', () => { fteam(); });
+        if (frestart) this.restart_button.addEventListener('click', () => { frestart(); });
+        if (fteam) this.team_button.addEventListener('click', () => { fteam(); });
         this.erase_button.addEventListener('click', () => this.deleteLastMove());
         for (const button of this.move_buttons) {
             button.addEventListener('click', () => { this.addMove(button.id); });
@@ -39,6 +44,7 @@ export default class Interface {
      * Adiciona um elemento à tela de display.
      */
     addToDisplay(element) {
+        if (!this.is_singleplayer && this.moveset_display.children.length === 1) return;
         this.moveset_display.appendChild(element);
     }
 
@@ -99,7 +105,7 @@ export default class Interface {
      * Lê o número de repetições a serem feitas para o bloco de repetição.
      */
     readNumber(min, max) {
-        do {
+        while (true) {
             let num = Number(prompt(`Digite a quantidade de vezes que deseja repetir o bloco de comandos (mínimo ${min}, máximo ${max}):`));
             if (isNaN(num)) {
                 alert('Digite um número!');
@@ -114,7 +120,7 @@ export default class Interface {
                 continue;
             }
             return num;
-        } while (true);
+        }
     }
 
     /**

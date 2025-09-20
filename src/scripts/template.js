@@ -32,6 +32,7 @@ export class SingleplayerTemplate extends Template {
         super();
         this.task_number = task_number;
         this.task = Configs.game.tasks[task_number];
+        this.ball = new Entity(`${Configs.assets.path}/${Configs.assets.ball_file_name}`, 0, 0, Configs.assets.ball_default_size.width, Configs.assets.ball_default_size.height);
         this.used_rows = this.rows / (1 + Number(this.task.half_field));
         this.main_player_position = {x: undefined, y: undefined};
         this.goalkeeper_side = undefined;
@@ -39,12 +40,6 @@ export class SingleplayerTemplate extends Template {
         this.goalkeeper_canvas_positions = {x: [180, 206, 232], y: 5};
         this.dx = this.task_number === 1 ? [-1, 0, 1] : [-1, 0, 1, 0];
         this.dy = this.task_number === 1 ? [0, -1, 0] : [0, -1, 0, 1];
-        this.ball = new Entity(`${Configs.assets.path}/${Configs.assets.ball_file_name}`, 0, 0, Configs.assets.ball_default_size.width, Configs.assets.ball_default_size.height);
-    }
-
-    defineBallPosition(x, y) {
-        this.ball.x = this.canvas_positions.x[x] + this.canvas_ball_diff.x;
-        this.ball.y = this.canvas_positions.y[y] + this.canvas_ball_diff.y;
     }
 
     canAddEnemy(x, y) {
@@ -78,6 +73,11 @@ export class SingleplayerTemplate extends Template {
                 this.player_ptr_grid[i][j] = this.player_ptr_grid_copy[i][j];
             }
         }
+    }
+
+    defineBallPosition(x, y) {
+        this.ball.x = this.canvas_positions.x[x] + this.canvas_ball_diff.x;
+        this.ball.y = this.canvas_positions.y[y] + this.canvas_ball_diff.y;
     }
 
     generateNewTemplate() {
@@ -190,5 +190,32 @@ export class MultiplayerTemplate extends Template {
     constructor() {
         super();
         this.player_ptr_grid = Array.from({length: this.rows}, () => Array(this.cols).fill(-1));
+        this.blue_ball = new Entity(`${Configs.assets.path}/${Configs.assets.ball_file_name}`, 0, 0, Configs.assets.ball_default_size.width, Configs.assets.ball_default_size.height);
+        this.red_ball = new Entity(`${Configs.assets.path}/${Configs.assets.ball_file_name}`, 0, 0, Configs.assets.ball_default_size.width, Configs.assets.ball_default_size.height);
+        this.main_red_player = {x: undefined, y: undefined};
+        this.main_blue_player = {x: undefined, y: undefined};
+    }
+
+    defineBallPosition(x_blue, y_blue, x_red, y_red) {
+        this.blue_ball.x = this.canvas_positions.x[x_blue] + this.canvas_ball_diff.x;
+        this.blue_ball.y = this.canvas_positions.y[y_blue] + this.canvas_ball_diff.y;
+        this.red_ball.x = this.canvas_positions.x[x_red] + this.canvas_ball_diff.x;
+        this.red_ball.y = this.canvas_positions.y[y_red] + this.canvas_ball_diff.y;
+    }
+
+    addGoalkeeper(team) {
+        const src = `${Configs.assets.path}/player_${team}_${this.team_info[team].asset_ptr + 1}.png`;
+        const width = Configs.assets.game_player_default_size.width;
+        const height = Configs.assets.game_player_default_size.height;
+        this.team_info[team].asset_ptr++;
+        const x = 206;
+        let y;
+        if (team === 'blue') {
+            y = 5;
+        }
+        else {
+            y = 545;
+        }
+        this.player_list.push(new Player(src, x, y, width, height, team));
     }
 }
