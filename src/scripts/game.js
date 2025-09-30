@@ -220,66 +220,6 @@ export class SingleplayerGame extends Game {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export class MultiplayerGame extends Game {
     constructor() {
         super();
@@ -307,6 +247,9 @@ export class MultiplayerGame extends Game {
         this.player_count = 2;
         this.game_controls = document.getElementById('main-content-game-controls');
         this.game_controls.style.display = 'none';
+        this.is_minigame = false;
+        this.kick_side = undefined;
+        this.defend_side = undefined;
     }
 
     drawEntities() {
@@ -425,7 +368,7 @@ export class MultiplayerGame extends Game {
             if (move === 'player_move_left' && (x === 0 || grid[y][x - 1] !== -1)) return false;
             if (move === 'player_move_up' && (y === 0 || grid[y - 1][x] !== -1)) return false;
             if (move === 'player_move_down' && (y === 7 || grid[y + 1][x] !== -1)) return false;
-            if (move === 'goal_kick_up' && !(y !== 7 && x !== 2)) return false;
+            if (move === 'goal_kick_up' && !(y === 7 && x === 2)) return false;
             if (move === 'ball_pass_up') {
                 for (let i = y - 1; i >= 0; i--) {
                     let ptr = grid[i][x];
@@ -470,7 +413,7 @@ export class MultiplayerGame extends Game {
             if (move === 'player_move_left' && (x === 0 || grid[y][x - 1] !== -1)) return false;
             if (move === 'player_move_up' && (y === 0 || grid[y - 1][x] !== -1)) return false;
             if (move === 'player_move_down' && (y === 7 || grid[y + 1][x] !== -1)) return false;
-            if (move === 'goal_kick_up' && !(y !== 0 && x !== 2)) return false;
+            if (move === 'goal_kick_up' && !(y === 0 && x === 2)) return false;
             if (move === 'ball_pass_up') {
                 for (let i = y - 1; i >= 0; i--) {
                     let ptr = grid[i][x];
@@ -511,8 +454,7 @@ export class MultiplayerGame extends Game {
         return true;
     }
 
-    setTargetPosition() {
-        const move = this.moveset[0];
+    setTargetPosition(move) {
         let y, x;
         if (this.teams[this.team_ptr] === 'blue') {
             y = this.template.main_blue_player.y;
@@ -527,8 +469,8 @@ export class MultiplayerGame extends Game {
         if (move.startsWith('player_move')) {
             this.target_position.y = this.template.canvas_positions.y[ny];
             this.target_position.x = this.template.canvas_positions.x[nx];
+            this.template.player_ptr_grid[ny][nx] = this.template.player_ptr_grid[y][x];
             this.template.player_ptr_grid[y][x] = -1;
-            this.template.player_ptr_grid[ny][nx] = 0;
         }
         else {
             if (move === 'ball_pass_up') {
@@ -569,24 +511,23 @@ export class MultiplayerGame extends Game {
         }
     }
 
-    tryGoal(move) {
-        if (Move.isValidMove(this.template, move)) {
-            this.has_scored = true;
+    tryGoal() {
+        this.is_minigame = true;
+        let moves = document.getElementsByClassName('move-button');
+        let sides = [document.getElementById('goal-kick-left'), document.getElementById('goal-kick-right')];
+        for (const move of moves) {
+            if (move.id !== 'goal-kick-up') move.style.display = 'none';
         }
-        else {
-            if (!Move.playerIsAtGoalPosition(this.template, this.template.main_player_position.x, this.template.main_player_position.y)) {
-                this.had_invalid_move = true;
-            }
-            else {
-                this.goalkeeper_defended = true;
-            }
+        for (const move of sides) {
+            move.style.display = 'block';
         }
+        this.interface.moveset_display.removeChild(this.interface.moveset_display.firstChild);
     }
 
     run = () => {
-        while (this.is_making_move && !this.finishedMove(this.moveset[0])) {
+        while (this.is_making_move && !this.finishedMove(this.moveset[this.moveset.length - 1])) {
             this.drawEntities();
-            this.makeMove(this.moveset[0]);
+            this.makeMove(this.moveset[this.moveset.length - 1]);
         }
     }
 
@@ -594,43 +535,53 @@ export class MultiplayerGame extends Game {
         this.moveset = this.interface.getMoveList();
     }
 
-    endGame(reason) {
-        switch (reason) {
-            case 'goal':
-                alert('GOOOL!!! Você venceu!');
-                this.generateTemplate();
-                break;
-            case 'invalid_move':
-                alert('Você perdeu. Seu jogador fez um movimento inválido.');
-                this.resetTemplate();
-                break;
-            case 'no_goal':
-                alert('Você perdeu. Seu jogador não marcou o gol.');
-                this.resetTemplate();
-                break;
-            case 'goalkeeper_defended':
-                alert('Você perdeu. O goleiro defendeu a finzalização.');
-                this.resetTemplate();
-                break;
-        }
-    }
-
     play = () => {
         this.getMoveset();
-        const move = this.moveset[0];
+        const move = this.moveset[this.moveset.length - 1];
+        if (this.is_minigame) {
+            if (this.kick_side === undefined) {
+                this.kick_side = move;
+                this.team_ptr ^= 1;
+                this.game_controls.style.backgroundColor = this.turn_color_codes[this.team_ptr];
+                this.interface.moveset_display.removeChild(this.interface.moveset_display.firstChild);
+            }
+            else {
+                this.defend_side = move;
+                if (this.kick_side === this.defend_side) {
+                    alert('DEFESA');
+                    this.is_minigame = false;
+                    this.kick_side = undefined;
+                    this.defend_side = undefined;
+                    let moves = document.getElementsByClassName('move-button');
+                    let sides = [document.getElementById('goal-kick-left'), document.getElementById('goal-kick-right')];
+                    for (const move of moves) {
+                        if (move.id !== 'goal-kick-left' && move.id !== 'goal_kick_right') move.style.display = 'block';
+                    }
+                    for (const move of sides) {
+                        move.style.display = 'none';
+                    }
+                    this.interface.moveset_display.removeChild(this.interface.moveset_display.firstChild);
+                }
+                else {
+                    alert(`GOOOOL!! Jogador ${this.teams_portuguese[this.team_ptr ^ 1]} venceu!!`);
+                    window.location.reload();
+                }
+            }
+            return;
+        }
         if (!this.isValidMove(move)) {
             alert('Movimento inválido. Tente novamente.');
             return;
         }
         if (move === 'goal_kick_up') {
             this.tryGoal();
+            return;
         }
-        else {
-            this.is_making_move = true;
-            this.setTargetPosition();
-            this.run();
-        }
+        this.is_making_move = true;
+        this.setTargetPosition(move);
+        this.run();
         this.team_ptr ^= 1;
         this.game_controls.style.backgroundColor = this.turn_color_codes[this.team_ptr];
+        this.interface.moveset_display.removeChild(this.interface.moveset_display.firstChild);
     }
 }
