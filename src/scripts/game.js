@@ -548,7 +548,7 @@ export class MultiplayerGame extends Game {
             else {
                 this.defend_side = move;
                 if (this.kick_side === this.defend_side) {
-                    alert('DEFESA');
+                    alert('O goleiro defendeu!');
                     this.is_minigame = false;
                     this.kick_side = undefined;
                     this.defend_side = undefined;
