@@ -140,9 +140,11 @@ export default class Interface {
         if (this.is_creating_repeat_block && this.repeat_block.length === 0) {
             return;
         }
-        const element = this.createMovement('repeat-move', 'img', 'repeat_move');
+        const image = this.is_creating_repeat_block ? 'close_bracket' : 'open_bracket';
+        const element = this.createMovement('repeat-move', 'img', image);
         if (!this.is_creating_repeat_block) {
             this.is_creating_repeat_block = true;
+            this.repeat_button.children[0].src = `${Configs.assets.path}/close_bracket.png`;
             this.fillDisplay();
             this.addToDisplay(element);
             return;
@@ -160,6 +162,7 @@ export default class Interface {
         this.addToDisplay(repeat_display);
         this.fillDisplay();
         this.is_creating_repeat_block = false;
+        this.repeat_button.children[0].src = `${Configs.assets.path}/open_bracket.png`;
         this.last_repeat_block_size = this.repeat_block.length;
         this.last_repeat_block_number = repeat;
         this.repeat_block = [];
@@ -186,6 +189,7 @@ export default class Interface {
         }
         if (this.lastDisplayElementClass('display-repeat-move')) {
             this.is_creating_repeat_block = false;
+            this.repeat_button.children[0].src = `${Configs.assets.path}/open_bracket.png`;
             this.removeLastFromDisplay();
             return;
         }
